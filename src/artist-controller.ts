@@ -1,20 +1,28 @@
 import express, { Express, Request, Response } from "express";
 import { connection } from "./connection.js";
-import { OkPacketParams } from "mysql2";
+import { OkPacketParams, RowDataPacket } from "mysql2";
+
+//INTERFACE DER SKAL EXTENDE RowDataPacket
+//Brug dette interface ifm. connection.execute(). Det vil give type annotering på din [results]
+//Syntax: const [results, fields] = await connection.execute<InterfaceNavn[]>(query, values);
+interface Artist extends RowDataPacket {
+    name: string;
+    image: string;
+}
 
 //GET
 async function getAllArtists(request: Request, response: Response) {
     const query = /*sql*/ `SELECT * FROM artists`;
 
     try {
-        const [results] = await connection.execute(query);
+        //Results har type: Artist[]
+        const [results] = await connection.execute<Artist[]>(query);
 
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             response.status(200).json(results);
         } else {
-            response.status(404).json({message: "No artists found"})
+            response.status(404).json({ message: "No artists found" });
         }
-
     } catch (error: any) {
         response.status(500).json({ error: error.message });
     }
@@ -28,15 +36,15 @@ async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}
         const values = [artistId];
         const query = /*sql*/ `SELECT * FROM artists WHERE id = ?`;
 
-        const [results, fields] = await connection.execute(query, values);
+        //Results har type: Artist[]
+        const [results, fields] = await connection.execute<Artist[]>(query, values);
 
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             const artist = results[0];
             response.status(200).json(artist);
         } else {
             response.status(404).json({ message: "Artist not found" });
         }
-
     } catch (error: any) {
         response.status(500).json({ error: error.message });
     }
@@ -84,7 +92,6 @@ async function updateArtist(request: Request<{artistId: string}, {}, {name: stri
         const [results, fields] = await connection.execute(query, values)
 
         const okPacket = results as OkPacketParams;
-        console.log(okPacket);
         
 
         if (okPacket.affectedRows && okPacket.affectedRows > 0) {
@@ -107,15 +114,16 @@ async function searchArtists(request: Request<{}, {}, {}, {q: string}>, response
         const q = request.query.q;
 
         if (!q) {
-            throw new Error("Query is missing")
+            throw new Error("Query is missing");
         }
-        
+
         const query = /*sql*/ `SELECT * FROM artists WHERE name LIKE ? ORDER BY name`;
         const values = [`%${q}%`];
 
-        const [results] = await connection.execute(query, values);
+        //Results har type: Artist[]
+        const [results] = await connection.execute<Artist[]>(query, values);
 
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             response.status(200).json(results);
         } else {
             response.status(404).json({ message: "No matching artists found" });

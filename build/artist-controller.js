@@ -1,9 +1,11 @@
 import { connection } from "./connection.js";
+//GET
 async function getAllArtists(request, response) {
     const query = /*sql*/ `SELECT * FROM artists`;
     try {
+        //Results har type: Artist[]
         const [results] = await connection.execute(query);
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             response.status(200).json(results);
         }
         else {
@@ -14,13 +16,15 @@ async function getAllArtists(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+//GET BY ID
 async function getSingleArtist(request, response) {
     try {
         const artistId = Number(request.params.artistId);
         const values = [artistId];
         const query = /*sql*/ `SELECT * FROM artists WHERE id = ?`;
+        //Results har type: Artist[]
         const [results, fields] = await connection.execute(query, values);
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             const artist = results[0];
             response.status(200).json(artist);
         }
@@ -32,6 +36,7 @@ async function getSingleArtist(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+//DELETE
 async function deleteArtist(request, response) {
     try {
         const artistId = Number(request.params.artistId);
@@ -51,6 +56,7 @@ async function deleteArtist(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+//UPDATE
 async function updateArtist(request, response) {
     try {
         const artistId = Number(request.params.artistId);
@@ -62,7 +68,6 @@ async function updateArtist(request, response) {
         const query = /*sql*/ `UPDATE artists SET name = ?, image = ? WHERE id = ?`;
         const [results, fields] = await connection.execute(query, values);
         const okPacket = results;
-        console.log(okPacket);
         if (okPacket.affectedRows && okPacket.affectedRows > 0) {
             response.status(204).json({ message: "Artist updated" });
         }
@@ -74,6 +79,7 @@ async function updateArtist(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+//SEARCH MED QUERY
 async function searchArtists(request, response) {
     try {
         //postman: localhost:3000/search?q=yourSearchTerm
@@ -83,8 +89,9 @@ async function searchArtists(request, response) {
         }
         const query = /*sql*/ `SELECT * FROM artists WHERE name LIKE ? ORDER BY name`;
         const values = [`%${q}%`];
+        //Results har type: Artist[]
         const [results] = await connection.execute(query, values);
-        if (Array.isArray(results) && results.length > 0) {
+        if (results.length > 0) {
             response.status(200).json(results);
         }
         else {
