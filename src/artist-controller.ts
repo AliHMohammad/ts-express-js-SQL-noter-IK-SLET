@@ -4,7 +4,7 @@ import { OkPacketParams } from "mysql2";
 
 
 async function getAllArtists(request: Request, response: Response) {
-    const query = "SELECT * FROM artists";
+    const query = /*sql*/ `SELECT * FROM artists`;
 
     try {
         const [results] = await connection.execute(query);
@@ -25,7 +25,7 @@ async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}
     try {
         const artistId = Number(request.params.artistId);
         const values = [artistId];
-        const query = "SELECT * FROM artists WHERE id = ?";
+        const query = /*sql*/ `SELECT * FROM artists WHERE id = ?`;
 
         const [results, fields] = await connection.execute(query, values);
 
@@ -47,7 +47,7 @@ async function deleteArtist(request: Request<{artistId: string}, {}, {}, {}>, re
         const artistId = Number(request.params.artistId);
         console.log(artistId);
         
-        const query = "DELETE FROM artists WHERE id = ?"
+        const query = /*sql*/ `DELETE FROM artists WHERE id = ?`;
         const values = [artistId];
 
         const [results, fields] = await connection.execute(query, values);

@@ -1,6 +1,6 @@
 import { connection } from "./connection.js";
 async function getAllArtists(request, response) {
-    const query = "SELECT * FROM artists";
+    const query = /*sql*/ `SELECT * FROM artists`;
     try {
         const [results] = await connection.execute(query);
         if (Array.isArray(results) && results.length > 0) {
@@ -18,7 +18,7 @@ async function getSingleArtist(request, response) {
     try {
         const artistId = Number(request.params.artistId);
         const values = [artistId];
-        const query = "SELECT * FROM artists WHERE id = ?";
+        const query = /*sql*/ `SELECT * FROM artists WHERE id = ?`;
         const [results, fields] = await connection.execute(query, values);
         if (Array.isArray(results) && results.length > 0) {
             const artist = results[0];
@@ -36,7 +36,7 @@ async function deleteArtist(request, response) {
     try {
         const artistId = Number(request.params.artistId);
         console.log(artistId);
-        const query = "DELETE FROM artists WHERE id = ?";
+        const query = /*sql*/ `DELETE FROM artists WHERE id = ?`;
         const values = [artistId];
         const [results, fields] = await connection.execute(query, values);
         const okPacket = results;
