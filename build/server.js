@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { userRouter } from "./ali-route.js";
+import { artistRouter } from "./artist-router.js";
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 app.listen(port, () => {
@@ -11,4 +11,4 @@ app.listen(port, () => {
 app.get("/", (request, response) => {
     response.send("Server is running");
 });
-app.use("/", userRouter);
+app.use("/", artistRouter);
