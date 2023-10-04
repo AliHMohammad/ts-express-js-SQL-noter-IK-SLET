@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 import { connection } from "./connection.js";
 import { OkPacketParams } from "mysql2";
 
-
+//GET
 async function getAllArtists(request: Request, response: Response) {
     const query = /*sql*/ `SELECT * FROM artists`;
 
@@ -21,6 +21,7 @@ async function getAllArtists(request: Request, response: Response) {
 
 }
 
+//GET BY ID
 async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}>, response: Response) {
     try {
         const artistId = Number(request.params.artistId);
@@ -41,6 +42,7 @@ async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}
     }
 }
 
+//DELETE
 async function deleteArtist(request: Request<{artistId: string}, {}, {}, {}>, response: Response) {
     
     try {
@@ -65,6 +67,7 @@ async function deleteArtist(request: Request<{artistId: string}, {}, {}, {}>, re
     }
 }
 
+//UPDATE
 async function updateArtist(request: Request<{artistId: string}, {}, {name: string, image: string}, {}>, response: Response) {
     
     try {
@@ -96,6 +99,7 @@ async function updateArtist(request: Request<{artistId: string}, {}, {name: stri
     }
 }
 
+//SEARCH MED QUERY
 async function searchArtists(request: Request<{}, {}, {}, {q: string}>, response: Response) {
     
     try {
