@@ -1,6 +1,12 @@
 import express from "express";
-const aliRouter = express.Router();
-aliRouter.get("/ali", (request, response) => {
-    response.send("Ali");
+const userRouter = express.Router();
+userRouter.put("/users/:userId", (request, response) => {
+    const id = request.params.userId;
+    const { firstName, lastName, dateOfBirth } = request.body;
 });
-export { aliRouter };
+userRouter.put("/users/:userId", (request, response) => {
+    const userId = Number(request.params.userId);
+    const { firstName, lastName, dateOfBirth, height } = request.body;
+});
+userRouter.get("/users/?q");
+export { userRouter };

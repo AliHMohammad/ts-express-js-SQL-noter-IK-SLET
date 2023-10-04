@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { aliRouter } from "./ali-route.js";
+import { userRouter } from "./ali-route.js";
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -11,4 +11,4 @@ app.listen(port, () => {
 app.get("/", (request, response) => {
     response.send("Server is running");
 });
-app.use("/", aliRouter);
+app.use("/", userRouter);
