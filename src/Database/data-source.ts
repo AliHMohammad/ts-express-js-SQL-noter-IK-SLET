@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Artists } from "./entities/Artists.js";
-import { Albums } from "./entities/Albums.js";
-import { Tracks } from "./entities/Tracks.js";
+import { Artists } from "../Model/Artists.js";
+import { Albums } from "../Model/Albums.js";
+import { Tracks } from "../Model/Tracks.js";
 import { config } from "dotenv";
 
 config();
@@ -17,5 +17,4 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: true,
     entities: [Artists, Albums, Tracks],
-})
-
+});

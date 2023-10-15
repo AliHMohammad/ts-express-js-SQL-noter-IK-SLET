@@ -1,39 +1,33 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "./typeORM/data-source.js";
-import { Artists } from "./typeORM/entities/Artists.js";
+import { AppDataSource } from "./Database/data-source.js";
+import { Artists } from "./Model/Artists.js";
 import Debug from "debug";
 
-
-const artistsRepository = AppDataSource.getRepository(Artists)
+const artistsRepository = AppDataSource.getRepository(Artists);
 
 //GET
 async function getAllArtists(request: Request, response: Response) {
-    
     try {
         const artists = await artistsRepository.find();
 
         if (artists.length === 0) {
             response.status(404).json({ message: "No Artists found" });
         } else {
-            response.status(200).json(artists)
+            response.status(200).json(artists);
         }
-
     } catch (error: any) {
         response.status(500).json({ error: error.message });
     }
-
 }
 
 //GET BY ID
 async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}>, response: Response) {
-    
     try {
-        const requestId = Number(request.params.artistId)
+        const requestId = Number(request.params.artistId);
         const artistFound = await artistsRepository.findOneByOrFail({ id: requestId });
-        
+
         response.status(200).json(artistFound);
     } catch (error: any) {
-
         switch (error.name) {
             case "EntityNotFoundError":
                 response.status(404).json({ error: error.message });
@@ -46,66 +40,53 @@ async function getSingleArtist(request: Request<{ artistId: string }, {}, {}, {}
 }
 
 //DELETE
-async function deleteArtist(request: Request<{artistId: string}, {}, {}, {}>, response: Response) {
-
+async function deleteArtist(request: Request<{ artistId: string }, {}, {}, {}>, response: Response) {
     try {
         const requestId = Number(request.params.artistId);
 
-        const deleteResult = await artistsRepository.createQueryBuilder("artist")
-            .delete()
-            .where("id = :id", { id: requestId })
-            .execute()
-            
-        
+        const deleteResult = await artistsRepository.createQueryBuilder("artist").delete().where("id = :id", { id: requestId }).execute();
+
         console.log(deleteResult.affected);
         //1
-        
+
         if (deleteResult.affected === 0) {
-            response.status(404).json({message: "Could not delete artist"});
-        } else {            
+            response.status(404).json({ message: "Could not delete artist" });
+        } else {
             response.status(204).json();
         }
-
     } catch (error: any) {
-        response.status(500).json({error: error.message})
+        response.status(500).json({ error: error.message });
     }
 }
 
 //UPDATE
-async function updateArtist(request: Request<{artistId: string}, {}, {name: string, image: string}, {}>, response: Response) {
-    
+async function updateArtist(request: Request<{ artistId: string }, {}, { name: string; image: string }, {}>, response: Response) {
     const name = request.body.name;
     const image = request.body.image;
-    
+
     try {
         if (!name || !image) {
             throw new Error("Request body is missing parameter");
         }
 
         const id = parseInt(request.params.artistId);
-        
-        const updateResult = await artistsRepository.createQueryBuilder("artist")
-            .update()
-            .set({name, image})
-            .where("id = :id", { id })
-            .execute()
-        
+
+        const updateResult = await artistsRepository.createQueryBuilder("artist").update().set({ name, image }).where("id = :id", { id }).execute();
+
         if (updateResult.affected === 0) {
             response.status(404).json({ message: "Could not update artist" });
         } else {
             response.status(201).json();
         }
-
     } catch (error: any) {
         response.status(500).json({ error: error.message });
     }
 }
 
 //SEARCH MED QUERY
-async function searchArtists(request: Request<{}, {}, {}, {q: string}>, response: Response) {
-    
+async function searchArtists(request: Request<{}, {}, {}, { q: string }>, response: Response) {
     //postman: localhost:3000/search?q=yourSearchTerm
-    
+
     const q = request.query.q;
 
     try {
@@ -118,18 +99,15 @@ async function searchArtists(request: Request<{}, {}, {}, {q: string}>, response
             .where("name LIKE :searchTerm", { searchTerm: `%${q}%` })
             .orderBy("name")
             .getMany();
-        
-        
+
         if (artists.length === 0) {
-            response.status(404).json({message: "No artists found"})
+            response.status(404).json({ message: "No artists found" });
         } else {
             response.status(200).json(artists);
         }
-
     } catch (error: any) {
         response.status(500).json({ error: error.message });
     }
 }
-
 
 export { getSingleArtist, getAllArtists, deleteArtist, updateArtist, searchArtists };

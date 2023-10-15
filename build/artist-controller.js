@@ -1,5 +1,5 @@
-import { AppDataSource } from "./typeORM/data-source.js";
-import { Artists } from "./typeORM/entities/Artists.js";
+import { AppDataSource } from "./Database/data-source.js";
+import { Artists } from "./Model/Artists.js";
 const artistsRepository = AppDataSource.getRepository(Artists);
 //GET
 async function getAllArtists(request, response) {
@@ -38,10 +38,7 @@ async function getSingleArtist(request, response) {
 async function deleteArtist(request, response) {
     try {
         const requestId = Number(request.params.artistId);
-        const deleteResult = await artistsRepository.createQueryBuilder("artist")
-            .delete()
-            .where("id = :id", { id: requestId })
-            .execute();
+        const deleteResult = await artistsRepository.createQueryBuilder("artist").delete().where("id = :id", { id: requestId }).execute();
         console.log(deleteResult.affected);
         //1
         if (deleteResult.affected === 0) {
@@ -64,11 +61,7 @@ async function updateArtist(request, response) {
             throw new Error("Request body is missing parameter");
         }
         const id = parseInt(request.params.artistId);
-        const updateResult = await artistsRepository.createQueryBuilder("artist")
-            .update()
-            .set({ name, image })
-            .where("id = :id", { id })
-            .execute();
+        const updateResult = await artistsRepository.createQueryBuilder("artist").update().set({ name, image }).where("id = :id", { id }).execute();
         if (updateResult.affected === 0) {
             response.status(404).json({ message: "Could not update artist" });
         }

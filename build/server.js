@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { artistRouter } from "./artist-router.js";
 import "reflect-metadata";
-import { AppDataSource } from "./typeORM/data-source.js";
+import { AppDataSource } from "./Database/data-source.js";
 const app = express();
 const port = 3000;
 app.use(express.json());
