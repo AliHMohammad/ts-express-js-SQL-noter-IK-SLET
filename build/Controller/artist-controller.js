@@ -1,5 +1,5 @@
-import { AppDataSource } from "./Database/data-source.js";
-import { Artists } from "./Model/Artists.js";
+import { AppDataSource } from "../Database/data-source.js";
+import { Artists } from "../Model/Artists.js";
 const artistsRepository = AppDataSource.getRepository(Artists);
 //GET
 async function getAllArtists(request, response) {
@@ -19,8 +19,8 @@ async function getAllArtists(request, response) {
 //GET BY ID
 async function getSingleArtist(request, response) {
     try {
-        const requestId = Number(request.params.artistId);
-        const artistFound = await artistsRepository.findOneByOrFail({ id: requestId });
+        const id = Number(request.params.artistId);
+        const artistFound = await artistsRepository.findOneByOrFail({ id: id });
         response.status(200).json(artistFound);
     }
     catch (error) {
@@ -38,6 +38,7 @@ async function getSingleArtist(request, response) {
 async function deleteArtist(request, response) {
     try {
         const requestId = Number(request.params.artistId);
+        //Sletter også på cascade, da dette er angivet i vores entitites og vores SQL backend (datagrip)
         const deleteResult = await artistsRepository.createQueryBuilder("artist").delete().where("id = :id", { id: requestId }).execute();
         console.log(deleteResult.affected);
         //1

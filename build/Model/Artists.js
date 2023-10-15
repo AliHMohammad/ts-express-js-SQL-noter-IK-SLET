@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", Object)
 ], Artists.prototype, "image", void 0);
 __decorate([
-    ManyToMany(() => Albums, (albums) => albums.artists),
+    ManyToMany(() => Albums, (albums) => albums.artists, { cascade: true }),
     JoinTable({
         name: "artists_albums",
         joinColumns: [{ name: "artist_id", referencedColumnName: "id" }],
@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Artists.prototype, "albums", void 0);
 __decorate([
-    ManyToMany(() => Tracks, (tracks) => tracks.artists),
+    ManyToMany(() => Tracks, (tracks) => tracks.artists, { cascade: true }),
     JoinTable({
         name: "artists_tracks",
         joinColumns: [{ name: "artist_id", referencedColumnName: "id" }],
