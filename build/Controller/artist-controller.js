@@ -74,6 +74,7 @@ async function updateArtist(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+//CREATE
 async function createArtist(request, response) {
     const { name, image } = request.body;
     try {

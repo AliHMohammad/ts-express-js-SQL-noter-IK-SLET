@@ -84,6 +84,7 @@ async function updateArtist(request: Request<{ artistId: string }, {}, { name: s
     }
 }
 
+//CREATE
 async function createArtist(request: Request<{}, {}, { name: string; image: string }, {}>, response: Response) {
     
     const { name, image } = request.body;

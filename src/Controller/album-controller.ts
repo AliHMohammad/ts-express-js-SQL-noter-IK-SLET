@@ -8,6 +8,7 @@ const albumRepository = AppDataSource.getRepository(Albums);
 const artistsRepository = AppDataSource.getRepository(Artists);
 const trackRepository = AppDataSource.getRepository(Tracks);
 
+//GET SINGLE
 async function getSingleAlbum(request: Request<{ albumId: string }, {}, {}, {}>, response: Response) {
     //Get all information from album by ID
     try {
@@ -35,6 +36,7 @@ async function getSingleAlbum(request: Request<{ albumId: string }, {}, {}, {}>,
     }
 }
 
+//GET ALL
 async function getAllAlbums(request: Request<{}, {}, {}, {}>, response: Response) {
     //Get all information from albums
     try {
@@ -56,6 +58,8 @@ async function getAllAlbums(request: Request<{}, {}, {}, {}>, response: Response
     }
 }
 
+
+//DELETE
 async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, response: Response) {
     const id = parseInt(request.params.albumId);
 
@@ -76,17 +80,19 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
     }
 }
 
+//UPDATE
 async function updateAlbum(request: Request<{ albumId: string }, {}, {}, {}>, response: Response) {
 
 }
 
+//CREATE
 async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelease: string, image: string;  artists: Artists[], tracks: Tracks[]}, {}>, response: Response) {
 
     const { title, image, artists, tracks } = request.body;
     const yearOfRelease = parseInt(request.body.yearOfRelease);
 
     try {
-        if (!title || !yearOfRelease || !image || !artists) {
+        if (!title || !yearOfRelease || !image || !artists || !tracks) {
             throw new Error("Parameters missing");
         }
 
@@ -135,6 +141,9 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
     }
 }
 
-async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, response: Response) {}
+//SEARCH
+async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, response: Response) {
+
+}
 
 export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum };

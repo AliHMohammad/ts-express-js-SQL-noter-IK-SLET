@@ -5,6 +5,7 @@ import { Tracks } from "../Model/Tracks.js";
 const albumRepository = AppDataSource.getRepository(Albums);
 const artistsRepository = AppDataSource.getRepository(Artists);
 const trackRepository = AppDataSource.getRepository(Tracks);
+//GET SINGLE
 async function getSingleAlbum(request, response) {
     //Get all information from album by ID
     try {
@@ -30,6 +31,7 @@ async function getSingleAlbum(request, response) {
         }
     }
 }
+//GET ALL
 async function getAllAlbums(request, response) {
     //Get all information from albums
     try {
@@ -49,6 +51,7 @@ async function getAllAlbums(request, response) {
         response.status(500).json({ error: error });
     }
 }
+//DELETE
 async function deleteAlbum(request, response) {
     const id = parseInt(request.params.albumId);
     try {
@@ -66,13 +69,15 @@ async function deleteAlbum(request, response) {
         response.status(500).json({ message: error.message });
     }
 }
+//UPDATE
 async function updateAlbum(request, response) {
 }
+//CREATE
 async function createAlbum(request, response) {
     const { title, image, artists, tracks } = request.body;
     const yearOfRelease = parseInt(request.body.yearOfRelease);
     try {
-        if (!title || !yearOfRelease || !image || !artists) {
+        if (!title || !yearOfRelease || !image || !artists || !tracks) {
             throw new Error("Parameters missing");
         }
         // 1. Create the Album
@@ -111,5 +116,7 @@ async function createAlbum(request, response) {
         response.status(500).json({ message: error.message });
     }
 }
-async function searchAlbums(request, response) { }
+//SEARCH
+async function searchAlbums(request, response) {
+}
 export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum };
