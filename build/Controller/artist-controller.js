@@ -74,6 +74,28 @@ async function updateArtist(request, response) {
         response.status(500).json({ error: error.message });
     }
 }
+async function createArtist(request, response) {
+    const { name, image } = request.body;
+    try {
+        if (!name || !image) {
+            throw new Error("Missing parameters");
+        }
+        const newArtist = artistsRepository.create({
+            name,
+            image
+        });
+        await artistsRepository.save(newArtist);
+        response.status(204).json({});
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            response.status(400).json({ error: error.message });
+        }
+        else {
+            response.status(500).json({ error: error.message });
+        }
+    }
+}
 //SEARCH MED QUERY
 async function searchArtists(request, response) {
     //postman: localhost:3000/search?q=yourSearchTerm
@@ -95,7 +117,12 @@ async function searchArtists(request, response) {
         }
     }
     catch (error) {
-        response.status(500).json({ error: error.message });
+        if (error instanceof Error) {
+            response.status(400).json({ error: error.message });
+        }
+        else {
+            response.status(500).json({ error: error.message });
+        }
     }
 }
-export { getSingleArtist, getAllArtists, deleteArtist, updateArtist, searchArtists };
+export { getSingleArtist, getAllArtists, deleteArtist, updateArtist, searchArtists, createArtist };
