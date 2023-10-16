@@ -51,11 +51,9 @@ async function getAllTracks(request, response) {
 }
 //CREATE
 async function createTrack(request, response) {
-    const title = request.body.title;
-    const duration = parseInt(request.body.duration);
-    const artists = request.body.artists;
-    const albums = request.body.albums;
     try {
+        const { title, artists, albums } = request.body;
+        const duration = parseInt(request.body.duration);
         const newTrack = trackRepository.create({
             title,
             duration,
@@ -95,6 +93,36 @@ async function deleteTrack(request, response) {
     }
 }
 //UPDATE
+async function updateTrack(request, response) {
+    const id = parseInt(request.params.trackId);
+    try {
+        const duration = parseInt(request.body.duration);
+        const { title, artists, albums } = request.body;
+        if (!title || !duration) {
+            throw new Error("missing Parameters");
+        }
+        // 1. Update album itself. Remember the id when create()
+        const newTrack = trackRepository.create({ title, duration, id });
+        const savedTrack = await trackRepository.save(newTrack);
+        // 2. If artists and/or albums is given, then create associations to them. Save again.
+        if (artists) {
+            savedTrack.artists = artists;
+            if (albums) {
+                savedTrack.albums = albums;
+            }
+            await trackRepository.save(savedTrack);
+        }
+        response.status(201).json({ message: "Track Updated" });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        }
+        else {
+            response.status(500).json({ error: error.message });
+        }
+    }
+}
 //SEARCH
 async function searchTracks(request, response) {
     const q = request.query.q;
@@ -123,4 +151,4 @@ async function searchTracks(request, response) {
         }
     }
 }
-export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks };
+export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack };

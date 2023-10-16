@@ -92,7 +92,7 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
 }
 
 //UPDATE
-async function updateAlbum(request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists: Artists[]; tracks: Tracks[] }, {}>, response: Response) {
+async function updateAlbum(request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists?: Artists[]; tracks?: Tracks[] }, {}>, response: Response) {
 
     const id = parseInt(request.params.albumId);
 
