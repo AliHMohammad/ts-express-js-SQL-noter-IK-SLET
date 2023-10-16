@@ -20,7 +20,10 @@ async function getSingleAlbum(request: Request<{ albumId: string }, {}, {}, {}>,
             .innerJoinAndSelect("album.artists", "artists")
             .innerJoinAndSelect("tracks.artists", "trackArtists")
             .where("album.id = :id", { id })
-            .orderBy("tracks.title")
+            .orderBy({
+                "tracks.title": "ASC",
+                "artists.name": "ASC",
+            })
             .getOneOrFail();
 
         response.status(200).json(albums);
@@ -45,7 +48,11 @@ async function getAllAlbums(request: Request<{}, {}, {}, {}>, response: Response
             .innerJoinAndSelect("album.tracks", "tracks")
             .innerJoinAndSelect("album.artists", "artists")
             .innerJoinAndSelect("tracks.artists", "trackArtists")
-            .orderBy("album.title")
+            .orderBy({
+                "album.title": "ASC",
+                "tracks.title": "ASC",
+                "artists.name": "ASC",
+            })
             .getMany();
 
         if (albums.length === 0) {
@@ -83,6 +90,55 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
 //UPDATE
 async function updateAlbum(request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists: Artists[]; tracks: Tracks[] }, {}>, response: Response) {
 
+    const id = parseInt(request.params.albumId);
+
+    const { title, image, artists, tracks } = request.body;
+    const yearOfRelease = parseInt(request.body.yearOfRelease);
+
+    try {
+        
+        if (!title || !image || !yearOfRelease) {
+            throw new Error("Parameters missing");
+        }
+        // 1. Update album itself.
+        const newAlbum = albumRepository.create({
+            title,
+            image,
+            yearOfRelease,
+        });
+
+        const updateResult = await albumRepository.createQueryBuilder("album").update().set(newAlbum).where("id = :id", { id }).execute();
+        
+        if (updateResult.affected === 0) {
+            throw new Error("Error at saving updated album");
+        }
+
+        // 2. Fetch the newly updated album so that you can attach artists and/or tracks to it, if they are defined.
+        const updatedAlbum = await albumRepository
+            .createQueryBuilder("album")
+            .innerJoinAndSelect("album.tracks", "tracks")
+            .innerJoinAndSelect("album.artists", "artists")
+            .where("album.id = :id", { id })
+            .getOneOrFail();
+        
+        if (artists) {
+            updatedAlbum.artists = artists;
+            
+            if (tracks) {
+                updatedAlbum.tracks = tracks;
+            }
+
+            await albumRepository.save(updatedAlbum);
+        }
+
+        response.status(201).json({message: "Completed"});
+    } catch (error: any) {
+        if (error instanceof Error) {
+            response.status(400).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
+    }
 }
 
 //CREATE
@@ -137,7 +193,11 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
 
         response.status(204).json({});
     } catch (error: any) {
-        response.status(500).json({ message: error.message });
+        if (error instanceof Error) {
+            response.status(400).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
     }
 }
 

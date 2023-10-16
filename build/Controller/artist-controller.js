@@ -4,7 +4,7 @@ const artistsRepository = AppDataSource.getRepository(Artists);
 //GET
 async function getAllArtists(request, response) {
     try {
-        const artists = await artistsRepository.find();
+        const artists = await artistsRepository.createQueryBuilder("artists").orderBy("name").getMany();
         if (artists.length === 0) {
             response.status(404).json({ message: "No Artists found" });
         }
