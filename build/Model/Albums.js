@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:type", Object)
 ], Albums.prototype, "image", void 0);
 __decorate([
-    ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true }),
+    ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true, onDelete: 'CASCADE' }),
     JoinTable({
         name: "albums_tracks",
         joinColumns: [{ name: "album_id", referencedColumnName: "id" }],

@@ -71,19 +71,23 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
     const id = parseInt(request.params.albumId);
 
     try {
-        //Sletter også på cascade, da dette er angivet i vores entitites og vores SQL backend (datagrip)
+        //Sletter også på cascade (relations), da dette er angivet i vores entitites og vores SQL backend (datagrip)
         const deleteResult = await albumRepository.createQueryBuilder("album")
             .delete()
             .where("id = :id", { id })
             .execute();
 
         if (deleteResult.affected === 0) {
-            response.status(404).json({ message: "No album found by specified ID" });
+            throw new Error("No album found by specified ID");
         }
 
         response.status(204).json()
     } catch (error: any) {
-        response.status(500).json({ message: error.message });
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
     }
 }
 
@@ -143,7 +147,7 @@ async function updateAlbum(request: Request<{ albumId: string }, {}, { title: st
 
 //CREATE
 async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelease: string, image: string;  artists: Artists[], tracks: Tracks[]}, {}>, response: Response) {
-
+    //Den her er i stand til at oprette helt nye sange, der ikke i forvejen eksisterer i databasen - dog med artister, der allerede eksisterer.
     const { title, image, artists, tracks } = request.body;
     const yearOfRelease = parseInt(request.body.yearOfRelease);
 
@@ -217,13 +221,17 @@ async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, respons
             .getMany();
         
         if (albums.length === 0) {
-            response.status(404).json({ error: "Could not find any match" });
+            throw new Error("Could not find any match");
         } else {
             response.status(201).json(albums);
         }
 
     } catch (error: any) {
-        response.status(500).json({ error: error.message });
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
     }
 }
 
