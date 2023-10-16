@@ -81,7 +81,7 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
 }
 
 //UPDATE
-async function updateAlbum(request: Request<{ albumId: string }, {}, {}, {}>, response: Response) {
+async function updateAlbum(request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists: Artists[]; tracks: Tracks[] }, {}>, response: Response) {
 
 }
 
@@ -144,6 +144,27 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
 //SEARCH
 async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, response: Response) {
 
+    const query = request.query.q;
+
+    try {
+        const albums = await albumRepository
+            .createQueryBuilder("album")
+            .innerJoinAndSelect("album.tracks", "tracks")
+            .innerJoinAndSelect("album.artists", "artists")
+            .innerJoinAndSelect("tracks.artists", "trackArtists")
+            .where("album.title LIKE :searchTerm", { searchTerm: `%${query}%` })
+            .orderBy("album.title")
+            .getMany();
+        
+        if (albums.length === 0) {
+            response.status(404).json({ error: "Could not find any match" });
+        } else {
+            response.status(201).json(albums);
+        }
+
+    } catch (error: any) {
+        response.status(500).json({ error: error.message });
+    }
 }
 
-export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum };
+export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum, searchAlbums, updateAlbum};

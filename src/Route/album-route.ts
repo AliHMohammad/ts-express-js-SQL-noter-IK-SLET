@@ -1,5 +1,5 @@
 import express from "express";
-import { createAlbum, deleteAlbum, getAllAlbums, getSingleAlbum } from "../Controller/album-controller.js";
+import { createAlbum, deleteAlbum, getAllAlbums, getSingleAlbum, searchAlbums } from "../Controller/album-controller.js";
 
 const albumRouter = express.Router();
 
@@ -13,6 +13,6 @@ albumRouter.post("/albums", createAlbum)
 
 albumRouter.put("/albums/:albumId", );
 
-albumRouter.get("/search", );
+albumRouter.get("/search/albums", searchAlbums);
 
 export { albumRouter };

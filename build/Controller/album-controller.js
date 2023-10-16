@@ -118,5 +118,25 @@ async function createAlbum(request, response) {
 }
 //SEARCH
 async function searchAlbums(request, response) {
+    const query = request.query.q;
+    try {
+        const albums = await albumRepository
+            .createQueryBuilder("album")
+            .innerJoinAndSelect("album.tracks", "tracks")
+            .innerJoinAndSelect("album.artists", "artists")
+            .innerJoinAndSelect("tracks.artists", "trackArtists")
+            .where("album.title LIKE :searchTerm", { searchTerm: `%${query}%` })
+            .orderBy("album.title")
+            .getMany();
+        if (albums.length === 0) {
+            response.status(404).json({ error: "Could not find any match" });
+        }
+        else {
+            response.status(201).json(albums);
+        }
+    }
+    catch (error) {
+        response.status(500).json({ error: error.message });
+    }
 }
-export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum };
+export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum, searchAlbums, updateAlbum };
