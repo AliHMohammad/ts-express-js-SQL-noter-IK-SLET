@@ -2,6 +2,34 @@ import prisma from "../Database/data-source.js";
 //GET SINGLE
 async function getSingleTrack(request, response) {
     try {
+        const id = parseInt(request.params.trackId);
+        const track = await prisma.tracks.findFirstOrThrow({
+            include: {
+                artists_tracks: true
+            },
+            where: {
+                id: id
+            }
+        });
+        const artists = await prisma.artists.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        });
+        const trackWithArtist = {
+            id: track.id,
+            title: track.title,
+            duration: track.duration,
+            artists: track.artists_tracks.map((artistTrack) => {
+                const artist = artists.find((a) => a.id === artistTrack.artist_id);
+                return {
+                    id: artist.id,
+                    name: artist.name,
+                    image: artist.image,
+                };
+            }),
+        };
+        response.status(201).json(trackWithArtist);
     }
     catch (error) {
         switch (error.name) {
