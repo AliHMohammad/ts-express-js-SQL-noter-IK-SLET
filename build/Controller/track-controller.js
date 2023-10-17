@@ -25,7 +25,27 @@ async function getAllTracks(request, response) {
                 title: "asc"
             }
         });
-        response.status(201).json({ tracks });
+        const artists = await prisma.artists.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        });
+        const tracksWithArtists = tracks.map((track) => {
+            return {
+                id: track.id,
+                title: track.title,
+                duration: track.duration,
+                artists: track.artists_tracks.map((artistTrack) => {
+                    const artist = artists.find((a) => a.id === artistTrack.artist_id);
+                    return {
+                        id: artist.id,
+                        name: artist.name,
+                        image: artist.image,
+                    };
+                }),
+            };
+        });
+        response.status(201).json(tracksWithArtists);
     }
     catch (error) {
         if (error instanceof Error) {
