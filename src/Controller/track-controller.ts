@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import prisma from "../Database/data-source.js";
 
 
 //GET SINGLE
@@ -24,6 +25,16 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
     
     try {
         
+        const tracks = await prisma.tracks.findMany({
+            include: {
+                artists_tracks: true
+            },
+            orderBy: {
+                title: "asc"
+            }
+        })
+
+        response.status(201).json({ tracks });
         
     } catch (error: any) {
         if (error instanceof Error) {
