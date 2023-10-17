@@ -6,15 +6,15 @@ import Debug from "debug";
 const artistsRepository = AppDataSource.getRepository(Artists);
 
 //GET
-async function getAllArtists(request: Request, response: Response) {
+async function getAllArtists(request: Request<{}, {}, {}, {}>, response: Response) {
     try {
         //? 2 måder at gøre det på. Enten med createQueryBuilder(), som er mere SQL agtigt, ELLER uden.
         // const artists = await artistsRepository.createQueryBuilder("artists").orderBy("name").getMany();
         const artists = await artistsRepository.find({
             order: {
-                "name": "ASC"
-            }
-        })
+                name: "ASC",
+            },
+        });
 
         if (artists.length === 0) {
             response.status(404).json({ message: "No Artists found" });
