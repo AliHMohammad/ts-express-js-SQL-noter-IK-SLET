@@ -1,9 +1,11 @@
-import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { Artists } from "../Model/Artists.js";
 import { Albums } from "../Model/Albums.js";
 import { Tracks } from "../Model/Tracks.js";
+import "reflect-metadata";
+//Importer "reflect-metadata"
 import { config } from "dotenv";
+//Kør config(), så den kan læse din env fil. Config importeres ^
 config();
 export const AppDataSource = new DataSource({
     type: "mysql",
@@ -14,5 +16,5 @@ export const AppDataSource = new DataSource({
     port: 3306,
     synchronize: true,
     logging: true,
-    entities: [Artists, Albums, Tracks],
+    entities: [Artists, Albums, Tracks], //Dine modeller, som du har auto-genereret.
 });
