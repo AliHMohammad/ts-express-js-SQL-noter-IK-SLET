@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model albums {
+  id              Int              @id @default(autoincrement())
+  title           String?          @unique(map: "IDX_2c85c318a6c245b0eecc208195") @db.VarChar(255)
+  year_of_release Int?
+  image           String?          @default("anon-billed") @db.VarChar(1000)
+  albums_tracks   albums_tracks[]
+  artists_albums  artists_albums[]
+}
+
+model albums_tracks {
+  album_id Int
+  track_id Int
+  tracks   tracks @relation(fields: [track_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_3d38c2b257494f33bb66c9c13da")
+  albums   albums @relation(fields: [album_id], references: [id], onDelete: Cascade, map: "FK_81913922fba0b198e60114c7f24")
+
+  @@id([album_id, track_id])
+  @@index([track_id], map: "IDX_3d38c2b257494f33bb66c9c13d")
+  @@index([album_id], map: "IDX_81913922fba0b198e60114c7f2")
+}
+
+model artists {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "IDX_70c3685e197743b963339d158c") @db.VarChar(255)
+  image          String?          @default("anon-billed") @db.VarChar(1000)
+  artists_albums artists_albums[]
+  artists_tracks artists_tracks[]
+}
+
+model artists_albums {
+  artist_id Int
+  album_id  Int
+  artists   artists @relation(fields: [artist_id], references: [id], onDelete: Cascade, map: "FK_67b48ae70968c9ec1c19db85fd8")
+  albums    albums  @relation(fields: [album_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_99d3391589c77a48ae6b4b599b2")
+
+  @@id([artist_id, album_id])
+  @@index([artist_id], map: "IDX_67b48ae70968c9ec1c19db85fd")
+  @@index([album_id], map: "IDX_99d3391589c77a48ae6b4b599b")
+}
+
+model artists_tracks {
+  artist_id Int
+  track_id  Int
+  artists   artists @relation(fields: [artist_id], references: [id], onDelete: Cascade, map: "FK_4205757a13a99b3e70e7ad31f87")
+  tracks    tracks  @relation(fields: [track_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_9934327d3098af13d3ebbc0bb6f")
+
+  @@id([artist_id, track_id])
+  @@index([artist_id], map: "IDX_4205757a13a99b3e70e7ad31f8")
+  @@index([track_id], map: "IDX_9934327d3098af13d3ebbc0bb6")
+}
+
+model tracks {
+  id             Int              @id @default(autoincrement())
+  title          String           @db.VarChar(255)
+  duration       Int
+  albums_tracks  albums_tracks[]
+  artists_tracks artists_tracks[]
+}

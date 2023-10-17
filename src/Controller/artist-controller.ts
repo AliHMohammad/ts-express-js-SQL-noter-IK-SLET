@@ -1,15 +1,29 @@
 import { Request, Response } from "express";
-
 import Debug from "debug";
+import prisma from "../Database/data-source.js";
 
 
 
 //GET
 async function getAllArtists(request: Request<{}, {}, {}, {}>, response: Response) {
     try {
-        
+        const artists = await prisma.artists.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        });
+
+        if (artists.length === 0) {
+            throw new Error("No artists found")
+        }
+
+        response.status(201).json(artists);
     } catch (error: any) {
-        response.status(500).json({ error: error.message });
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
     }
 }
 

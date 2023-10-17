@@ -4,6 +4,7 @@ import { artistRouter } from "./Route/artist-router.js";
 import { albumRouter } from "./Route/album-route.js";
 import { trackRouter } from "./Route/track-route.js";
 import { otherRouter } from "./Route/other-route.js";
+import prisma from "./Database/data-source.js";
 
 
 const app: Express = express();
@@ -19,6 +20,7 @@ app.get("/", (request: Request, response: Response) => {
 app.use("/", artistRouter, albumRouter, trackRouter, otherRouter);
 
 app.listen(port, async () => {
+    await prisma.$connect();
     console.log("App is running on port " + port);
 });
 

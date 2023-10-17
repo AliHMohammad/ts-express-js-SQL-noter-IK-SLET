@@ -18,9 +18,11 @@
         "concurrently": "^8.2.1",
         "dotenv": "^16.3.1",
         "nodemon": "^3.0.1",
+        "prisma": "^5.4.2",
         "typescript": "^5.2.2"
     },
     "dependencies": {
+        "@prisma/client": "^5.4.2",
         "@types/debug": "^4.1.9",
         "cors": "^2.8.5",
         "debug": "^4.3.4",
