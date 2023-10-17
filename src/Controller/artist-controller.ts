@@ -77,7 +77,7 @@ async function updateArtist(request: Request<{ artistId: string }, {}, { name: s
         }
 
         const id = parseInt(request.params.artistId);
-
+        //? Alternativt kan den gøres med create() og derefter save(). Dog skal du huske at smide id'et med.
         const updateResult = await artistsRepository.createQueryBuilder("artist").update().set({ name, image }).where("id = :id", { id }).execute();
 
         if (updateResult.affected === 0) {

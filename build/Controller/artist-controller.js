@@ -68,6 +68,7 @@ async function updateArtist(request, response) {
             throw new Error("Request body is missing parameter");
         }
         const id = parseInt(request.params.artistId);
+        //? Alternativt kan den gøres med create() og derefter save(). Dog skal du huske at smide id'et med.
         const updateResult = await artistsRepository.createQueryBuilder("artist").update().set({ name, image }).where("id = :id", { id }).execute();
         if (updateResult.affected === 0) {
             response.status(404).json({ message: "Could not update artist" });

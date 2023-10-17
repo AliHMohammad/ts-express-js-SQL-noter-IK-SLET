@@ -14,6 +14,12 @@ async function getSingleAlbum(request: Request<{ albumId: string }, {}, {}, {}>,
     try {
         const id = parseInt(request.params.albumId);
 
+        //? Der angives et alias, som er hvad der står i createQueryBuilder("")
+        //? Dette alias bruger vi, når vi så skal referere til dens properties.
+        //? "album" har følgende properties: title, yearOfRelease, artists, albums
+        //? Når vi skal joine, angiver vi hvorhenne dette resultat skal sidde på "album"
+        //? I den første skal den sidde på album.tracks, hvor vi joiner med "tracks" tabellen
+        //! Jeg ved ikke hvorfor "trackArtists" virker, men samme princip holder med, at tracks har propertien artists
         const albums = await albumRepository
             .createQueryBuilder("album")
             .innerJoinAndSelect("album.tracks", "tracks")
