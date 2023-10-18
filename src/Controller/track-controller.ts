@@ -103,7 +103,7 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
 async function createTrack(request: Request<{}, {}, { title: string, duration: string, artists: any[], albums: any[] }, {}>, response: Response) {
     
     try {
-        
+        const createResult = prisma.tracks;
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });

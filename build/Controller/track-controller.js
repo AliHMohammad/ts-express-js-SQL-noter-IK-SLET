@@ -87,6 +87,7 @@ async function getAllTracks(request, response) {
 //CREATE
 async function createTrack(request, response) {
     try {
+        const createResult = prisma.tracks;
     }
     catch (error) {
         if (error instanceof Error) {

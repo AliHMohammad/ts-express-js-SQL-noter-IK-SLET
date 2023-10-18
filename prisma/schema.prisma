@@ -34,6 +34,23 @@ model artists {
   artists_albums artists_albums[]
   artists_tracks artists_tracks[]
 }
+model artists_tracks {
+  artist_id Int
+  track_id  Int
+  artists   artists @relation(fields: [artist_id], references: [id], onDelete: Cascade, map: "FK_4205757a13a99b3e70e7ad31f87")
+  tracks    tracks  @relation(fields: [track_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_9934327d3098af13d3ebbc0bb6f")
+
+  @@id([artist_id, track_id])
+  @@index([artist_id], map: "IDX_4205757a13a99b3e70e7ad31f8")
+  @@index([track_id], map: "IDX_9934327d3098af13d3ebbc0bb6")
+}
+model tracks {
+  id             Int              @id @default(autoincrement())
+  title          String           @db.VarChar(255)
+  duration       Int
+  albums_tracks  albums_tracks[]
+  artists_tracks artists_tracks[]
+}
 
 model artists_albums {
   artist_id Int
@@ -46,21 +63,4 @@ model artists_albums {
   @@index([album_id], map: "IDX_99d3391589c77a48ae6b4b599b")
 }
 
-model artists_tracks {
-  artist_id Int
-  track_id  Int
-  artists   artists @relation(fields: [artist_id], references: [id], onDelete: Cascade, map: "FK_4205757a13a99b3e70e7ad31f87")
-  tracks    tracks  @relation(fields: [track_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_9934327d3098af13d3ebbc0bb6f")
 
-  @@id([artist_id, track_id])
-  @@index([artist_id], map: "IDX_4205757a13a99b3e70e7ad31f8")
-  @@index([track_id], map: "IDX_9934327d3098af13d3ebbc0bb6")
-}
-
-model tracks {
-  id             Int              @id @default(autoincrement())
-  title          String           @db.VarChar(255)
-  duration       Int
-  albums_tracks  albums_tracks[]
-  artists_tracks artists_tracks[]
-}
