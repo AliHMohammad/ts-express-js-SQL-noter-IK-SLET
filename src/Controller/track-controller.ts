@@ -6,6 +6,7 @@ import { Tracks } from "../Model/Tracks.js";
 import { ILike } from "typeorm";
 
 const trackRepository = AppDataSource.getRepository(Tracks);
+const artistsRepository = AppDataSource.getRepository(Artists);
 
 //GET SINGLE
 async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>, response: Response) {
@@ -52,6 +53,39 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
         }
 
         response.status(201).json(albums);
+    } catch (error: any) {
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        } else {
+            response.status(500).json({ error: error.message });
+        }
+    }
+}
+
+//GET ALL TRACKS WITH THIS ARTIST
+async function getAllTracksFromSingleArtist(request: Request<{ artistId: string }, {}, {}, {}>, response: Response) {
+
+    const id = parseInt(request.params.artistId);
+
+    try {
+        const artist = await artistsRepository.findOneOrFail({
+            where: {
+                id: id
+            }
+        })
+        
+        const tracks = await trackRepository.createQueryBuilder("tracks")
+        .select("tracks.id AS id, tracks.title AS title, tracks.duration AS duration")
+        .innerJoin("tracks.artists", "artists")
+        .where("artists.id = :id", { id })
+        .orderBy({
+            "tracks.title": "ASC"
+        })
+        .execute()
+        
+        artist.tracks = tracks;
+        
+        response.status(201).json(artist);
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });
@@ -183,4 +217,4 @@ async function searchTracks(request: Request<{}, {}, {}, {q: string}>, response:
 }
 
 
-export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack };
+export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack, getAllTracksFromSingleArtist };

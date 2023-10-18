@@ -1,7 +1,9 @@
 import { AppDataSource } from "../Database/data-source.js";
+import { Artists } from "../Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 import { ILike } from "typeorm";
 const trackRepository = AppDataSource.getRepository(Tracks);
+const artistsRepository = AppDataSource.getRepository(Artists);
 //GET SINGLE
 async function getSingleTrack(request, response) {
     try {
@@ -39,6 +41,35 @@ async function getAllTracks(request, response) {
             throw new Error("No albums found");
         }
         response.status(201).json(albums);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            response.status(404).json({ error: error.message });
+        }
+        else {
+            response.status(500).json({ error: error.message });
+        }
+    }
+}
+//GET ALL TRACKS WITH THIS ARTIST
+async function getAllTracksFromSingleArtist(request, response) {
+    const id = parseInt(request.params.artistId);
+    try {
+        const artist = await artistsRepository.findOneOrFail({
+            where: {
+                id: id
+            }
+        });
+        const tracks = await trackRepository.createQueryBuilder("tracks")
+            .select("tracks.id AS id, tracks.title AS title, tracks.duration AS duration")
+            .innerJoin("tracks.artists", "artists")
+            .where("artists.id = :id", { id })
+            .orderBy({
+            "tracks.title": "ASC"
+        })
+            .execute();
+        artist.tracks = tracks;
+        response.status(201).json(artist);
     }
     catch (error) {
         if (error instanceof Error) {
@@ -151,4 +182,4 @@ async function searchTracks(request, response) {
         }
     }
 }
-export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack };
+export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack, getAllTracksFromSingleArtist };

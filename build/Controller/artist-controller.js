@@ -8,8 +8,8 @@ async function getAllArtists(request, response) {
         // const artists = await artistsRepository.createQueryBuilder("artists").orderBy("name").getMany();
         const artists = await artistsRepository.find({
             order: {
-                "name": "ASC"
-            }
+                name: "ASC",
+            },
         });
         if (artists.length === 0) {
             response.status(404).json({ message: "No Artists found" });
