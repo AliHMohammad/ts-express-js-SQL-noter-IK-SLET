@@ -52,7 +52,7 @@ async function deleteArtist(request: Request<{ artistId: string }, {}, {}, {}>, 
 
         //Sletter også på cascade, da dette er angivet i vores entitites og vores SQL backend (datagrip)
         const deleteResult = await artistsRepository.createQueryBuilder("artist").delete().where("id = :id", { id: requestId }).execute();
-
+        
         console.log(deleteResult.affected);
         //1
 
