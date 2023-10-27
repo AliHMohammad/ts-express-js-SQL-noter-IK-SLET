@@ -1,22 +1,20 @@
 import express from "express";
-import { createArtist, deleteArtist, searchArtists, updateArtist } from "../../Controller/artist-controller.js";
 import ArtistController from "../Controller/ArtistController.js";
+import {searchArtists} from "../../Controller/artist-controller.js";
 
 const artistRouter = express.Router();
 const artistController = new ArtistController();
-
 
 artistRouter.get("/artists", artistController.getAllArtistsExecutor);
 
 artistRouter.get("/artists/:artistId", artistController.getSingleArtistExecutor);
 
-
-artistRouter.delete("/artists/:artistId", deleteArtist);
+artistRouter.delete("/artists/:artistId", artistController.deleteArtistExecutor);
 
 artistRouter.post("/artists", artistController.createArtistExecutor);
 
-artistRouter.put("/artists/:artistId", updateArtist);
+artistRouter.put("/artists/:artistId", artistController.updateArtistExecutor);
 
-artistRouter.get("/search/artists", searchArtists);
+artistRouter.get("/search/artists", artistController.searchArtistsExecutor);
 
 export { artistRouter };

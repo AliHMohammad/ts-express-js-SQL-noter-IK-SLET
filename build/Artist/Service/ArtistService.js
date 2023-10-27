@@ -28,4 +28,44 @@ export default class ArtistService {
         });
         await this.repository.save(newArtist);
     }
+    async deleteArtist(id) {
+        const deleteResult = await this.repository.createQueryBuilder("artist").delete().where("id = :id", { id: id }).execute();
+        if (deleteResult.affected === 0) {
+            throw new Error("Could not delete artist with specified ID");
+        }
+    }
+    async updateArtist(id, name, image) {
+        const updateResult = await this.repository.createQueryBuilder("artists")
+            .update()
+            .set({
+            name,
+            image
+        })
+            .where("id = :id", { id })
+            .execute();
+        if (updateResult.affected === 0) {
+            throw new Error("Could not update artist with specified ID");
+        }
+        return updateResult;
+    }
+    async searchArtists(query) {
+        // const artists = await this.repository.find({
+        //     where: {
+        //         name: ILike(`%${query}%`)
+        //     },
+        //     order: {
+        //         name: "ASC"
+        //     }
+        // })
+        const artists = await this.repository.createQueryBuilder("artists")
+            .where("name LIKE :search", { search: query })
+            .orderBy({
+            name: "ASC"
+        })
+            .execute();
+        if (!artists.length) {
+            throw new Error("Could not find any artists");
+        }
+        return artists;
+    }
 }

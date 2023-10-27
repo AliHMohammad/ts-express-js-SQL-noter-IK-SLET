@@ -97,7 +97,7 @@ async function createArtist(request, response) {
     }
     catch (error) {
         if (error instanceof Error) {
-            response.status(400).json({ error: error.message });
+            response.status(404).json({ error: error.message });
         }
         else {
             response.status(500).json({ error: error.message });
@@ -108,6 +108,7 @@ async function createArtist(request, response) {
 async function searchArtists(request, response) {
     //postman: localhost:3000/search?q=yourSearchTerm
     const q = request.query.q;
+    console.log(q);
     try {
         if (!q) {
             throw new Error("Query is missing");
