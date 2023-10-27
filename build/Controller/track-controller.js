@@ -2,34 +2,29 @@ import prisma from "../Database/data-source.js";
 //GET SINGLE
 async function getSingleTrack(request, response) {
     try {
-        // const id = parseInt(request.params.trackId);
-        // const track = await prisma.tracks.findFirstOrThrow({
-        //     include: {
-        //         artists_tracks: true
-        //     },
-        //     where: {
-        //         id: id
-        //     }
-        // })
-        // const artists = await prisma.artists.findMany({
-        //     orderBy: {
-        //         name: "asc"
-        //     }
-        // })
-        // const trackWithArtist = {
-        //     id: track.id,
-        //     title: track.title,
-        //     duration: track.duration,
-        //     artists: track.artists_tracks.map((artistTrack) => {
-        //         const artist = artists.find((a) => a.id === artistTrack.artist_id);
-        //         return {
-        //             id: artist!.id,
-        //             name: artist!.name,
-        //             image: artist!.image,
-        //         };
-        //     }),
-        // };
-        // response.status(201).json(trackWithArtist);
+        const id = parseInt(request.params.trackId);
+        const track = await prisma.tracks.findFirstOrThrow({
+            where: {
+                id: id
+            },
+            select: {
+                id: true,
+                title: true,
+                duration: true,
+                artists: {
+                    select: { artists: true }
+                },
+            }
+        });
+        const result = {
+            ...track,
+            artists: track.artists.map((artist) => {
+                return {
+                    ...artist.artists
+                };
+            })
+        };
+        response.status(201).json(result);
     }
     catch (error) {
         switch (error.name) {
@@ -75,8 +70,12 @@ async function getAllTracks(request, response) {
 }
 //CREATE
 async function createTrack(request, response) {
+    const { title, artists, albums } = request.body;
+    const duration = parseInt(request.body.duration);
     try {
-        const createResult = prisma.tracks;
+        if (!title || !duration || !artists || albums) {
+            throw new Error("Parameters missing");
+        }
     }
     catch (error) {
         if (error instanceof Error) {

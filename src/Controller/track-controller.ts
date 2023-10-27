@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../Database/data-source.js";
+import { albums, artists } from "@prisma/client";
 
 
 //GET SINGLE
@@ -7,38 +8,33 @@ async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>,
     
     try {
 
-        // const id = parseInt(request.params.trackId);
+        const id = parseInt(request.params.trackId);
 
-        // const track = await prisma.tracks.findFirstOrThrow({
-        //     include: {
-        //         artists_tracks: true
-        //     },
-        //     where: {
-        //         id: id
-        //     }
-        // })
+        const track = await prisma.tracks.findFirstOrThrow({
+            where: {
+                id: id
+            },
+            select: {
+                id: true,
+                title: true,
+                duration: true,
+                artists: {
+                    select: {artists: true}
+                },
+                
+            }
+        })
 
-        // const artists = await prisma.artists.findMany({
-        //     orderBy: {
-        //         name: "asc"
-        //     }
-        // })
+        const result = {
+            ...track,
+            artists: track.artists.map((artist) => {
+                return {
+                    ...artist.artists
+                }
+            })
+        }
 
-        // const trackWithArtist = {
-        //     id: track.id,
-        //     title: track.title,
-        //     duration: track.duration,
-        //     artists: track.artists_tracks.map((artistTrack) => {
-        //         const artist = artists.find((a) => a.id === artistTrack.artist_id);
-        //         return {
-        //             id: artist!.id,
-        //             name: artist!.name,
-        //             image: artist!.image,
-        //         };
-        //     }),
-        // };
-
-        // response.status(201).json(trackWithArtist);
+        response.status(201).json(result);
 
     } catch (error: any) {
         switch (error.name) {
@@ -87,10 +83,18 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
 }
 
 //CREATE
-async function createTrack(request: Request<{}, {}, { title: string, duration: string, artists: any[], albums: any[] }, {}>, response: Response) {
+async function createTrack(request: Request<{}, {}, { title: string, duration: string, artists: artists[], albums: albums[] }, {}>, response: Response) {
     
+    const { title, artists, albums } = request.body;
+    const duration = parseInt(request.body.duration);
+
     try {
-        const createResult = prisma.tracks;
+
+        if (!title || !duration || !artists || albums) {
+            throw new Error("Parameters missing");
+        }
+
+        
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });
