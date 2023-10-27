@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Albums } from "./Albums.js";
+import { Albums } from "../Album/Model/Albums.js";
 import { Artists } from "../Artist/Model/Artists.js";
 
 @Entity("tracks", { schema: "music_base_db" })

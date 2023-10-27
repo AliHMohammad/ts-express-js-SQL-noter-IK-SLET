@@ -1,6 +1,6 @@
 import express from "express";
 import ArtistController from "../Controller/ArtistController.js";
-import {searchArtists} from "../../Controller/artist-controller.js";
+
 
 const artistRouter = express.Router();
 const artistController = new ArtistController();

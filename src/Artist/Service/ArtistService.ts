@@ -66,21 +66,24 @@ export default class ArtistService {
 
     public async searchArtists(query: string) {
 
-        // const artists = await this.repository.find({
-        //     where: {
-        //         name: ILike(`%${query}%`)
-        //     },
-        //     order: {
-        //         name: "ASC"
-        //     }
-        // })
-
-        const artists = await this.repository.createQueryBuilder("artists")
-            .where("name LIKE :search", {search: query})
-            .orderBy({
+        const artists = await this.repository.find({
+            where: {
+                name: ILike(`%${query}%`)
+            },
+            order: {
                 name: "ASC"
-            })
-            .execute();
+            }
+        })
+
+        /*Med QueryBuilder:*/
+
+        // const artists: Artists[] = await this.repository
+        //     .createQueryBuilder("artists")
+        //     .where("name LIKE :search", {search: `%${query}%`})
+        //     .orderBy({
+        //         name: "ASC"
+        //     })
+        //     .getMany()
 
 
         if (!artists.length){

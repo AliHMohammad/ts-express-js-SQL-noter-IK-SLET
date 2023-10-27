@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Albums } from "../../Model/Albums.js";
+import { Albums } from "../../Album/Model/Albums.js";
 import { Tracks } from "../../Model/Tracks.js";
 
 @Index("name", ["name"], { unique: true })

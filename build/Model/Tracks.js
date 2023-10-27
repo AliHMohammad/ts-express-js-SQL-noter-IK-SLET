@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Albums } from "./Albums.js";
+import { Albums } from "../Album/Model/Albums.js";
 import { Artists } from "../Artist/Model/Artists.js";
 let Tracks = class Tracks {
     id;

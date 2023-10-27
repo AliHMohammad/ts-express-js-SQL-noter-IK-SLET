@@ -1,4 +1,4 @@
-import {Request, response, Response} from "express";
+import {Request, Response} from "express";
 import ArtistService from "../Service/ArtistService.js";
 
 export default class ArtistController {
@@ -108,7 +108,8 @@ export default class ArtistController {
         }
     }
 
-    public async searchArtistsExecutor(request: Request<{},{},{},{q: string}>){
+    public async searchArtistsExecutor(request: Request<{}, {}, {}, { q: string }>, response: Response){
+        //postman: localhost:3000/search?q=yourSearchTerm
         const query = request.query.q;
 
         try {
@@ -118,13 +119,13 @@ export default class ArtistController {
 
             const apiService = new ArtistService();
             const artists = await apiService.searchArtists(query);
-            console.log("Responding")
+
             response.status(201).json(artists);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(400).json({ error: error.message });
             } else {
-                response.status(500).json({ error: error.message });
+                response.status(500).json({error: error.message});
             }
         }
     }

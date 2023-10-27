@@ -1,3 +1,4 @@
+import { ILike } from "typeorm";
 import { Artists } from "../Model/Artists.js";
 import { AppDataSource } from "../../Database/data-source.js";
 export default class ArtistService {
@@ -49,20 +50,22 @@ export default class ArtistService {
         return updateResult;
     }
     async searchArtists(query) {
-        // const artists = await this.repository.find({
-        //     where: {
-        //         name: ILike(`%${query}%`)
-        //     },
-        //     order: {
+        const artists = await this.repository.find({
+            where: {
+                name: ILike(`%${query}%`)
+            },
+            order: {
+                name: "ASC"
+            }
+        });
+        /*Med QueryBuilder:*/
+        // const artists: Artists[] = await this.repository
+        //     .createQueryBuilder("artists")
+        //     .where("name LIKE :search", {search: `%${query}%`})
+        //     .orderBy({
         //         name: "ASC"
-        //     }
-        // })
-        const artists = await this.repository.createQueryBuilder("artists")
-            .where("name LIKE :search", { search: query })
-            .orderBy({
-            name: "ASC"
-        })
-            .execute();
+        //     })
+        //     .getMany()
         if (!artists.length) {
             throw new Error("Could not find any artists");
         }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../Database/data-source.js";
-import { Albums } from "../Model/Albums.js";
+import { Albums } from "../Album/Model/Albums.js";
 import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 
