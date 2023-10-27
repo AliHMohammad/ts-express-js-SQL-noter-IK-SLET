@@ -9,11 +9,11 @@ datasource db {
 
 model albums {
   id              Int              @id @default(autoincrement())
-  title           String?          @unique(map: "IDX_2c85c318a6c245b0eecc208195") @db.VarChar(255)
-  year_of_release Int?
+  title           String           @unique(map: "IDX_2c85c318a6c245b0eecc208195") @db.VarChar(255)
+  year_of_release Int
   image           String?          @default("anon-billed") @db.VarChar(1000)
-  albums_tracks   albums_tracks[]
-  artists_albums  artists_albums[]
+  tracks   albums_tracks[]
+  artists  artists_albums[]
 }
 
 model albums_tracks {
@@ -31,8 +31,8 @@ model artists {
   id             Int              @id @default(autoincrement())
   name           String           @unique(map: "IDX_70c3685e197743b963339d158c") @db.VarChar(255)
   image          String?          @default("anon-billed") @db.VarChar(1000)
-  artists_albums artists_albums[]
-  artists_tracks artists_tracks[]
+  albums artists_albums[]
+  tracks artists_tracks[]
 }
 model artists_tracks {
   artist_id Int
@@ -48,8 +48,8 @@ model tracks {
   id             Int              @id @default(autoincrement())
   title          String           @db.VarChar(255)
   duration       Int
-  albums_tracks  albums_tracks[]
-  artists_tracks artists_tracks[]
+  albums  albums_tracks[]
+  artists artists_tracks[]
 }
 
 model artists_albums {

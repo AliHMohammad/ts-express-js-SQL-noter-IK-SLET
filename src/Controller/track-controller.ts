@@ -7,38 +7,38 @@ async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>,
     
     try {
 
-        const id = parseInt(request.params.trackId);
+        // const id = parseInt(request.params.trackId);
 
-        const track = await prisma.tracks.findFirstOrThrow({
-            include: {
-                artists_tracks: true
-            },
-            where: {
-                id: id
-            }
-        })
+        // const track = await prisma.tracks.findFirstOrThrow({
+        //     include: {
+        //         artists_tracks: true
+        //     },
+        //     where: {
+        //         id: id
+        //     }
+        // })
 
-        const artists = await prisma.artists.findMany({
-            orderBy: {
-                name: "asc"
-            }
-        })
+        // const artists = await prisma.artists.findMany({
+        //     orderBy: {
+        //         name: "asc"
+        //     }
+        // })
 
-        const trackWithArtist = {
-            id: track.id,
-            title: track.title,
-            duration: track.duration,
-            artists: track.artists_tracks.map((artistTrack) => {
-                const artist = artists.find((a) => a.id === artistTrack.artist_id);
-                return {
-                    id: artist!.id,
-                    name: artist!.name,
-                    image: artist!.image,
-                };
-            }),
-        };
+        // const trackWithArtist = {
+        //     id: track.id,
+        //     title: track.title,
+        //     duration: track.duration,
+        //     artists: track.artists_tracks.map((artistTrack) => {
+        //         const artist = artists.find((a) => a.id === artistTrack.artist_id);
+        //         return {
+        //             id: artist!.id,
+        //             name: artist!.name,
+        //             image: artist!.image,
+        //         };
+        //     }),
+        // };
 
-        response.status(201).json(trackWithArtist);
+        // response.status(201).json(trackWithArtist);
 
     } catch (error: any) {
         switch (error.name) {
@@ -56,40 +56,27 @@ async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>,
 async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response) {
     
     try {
-        
+
         const tracks = await prisma.tracks.findMany({
             include: {
-                artists_tracks: true
-            },
-            orderBy: {
-                title: "asc"
+                artists: {
+                    select: {artists: true}
+                }
             }
         })
 
-        const artists = await prisma.artists.findMany({
-            orderBy: {
-                name: "asc"
-            }
-        });
-
-        const tracksWithArtists = tracks.map((track) => {
+        const result = tracks.map(track => {
             return {
-                id: track.id,
-                title: track.title,
-                duration: track.duration,
-                artists: track.artists_tracks.map((artistTrack) => {
-                    const artist = artists.find((a) => a.id === artistTrack.artist_id);
+                ...track,
+                artists: track.artists.map((artist) => {
                     return {
-                        id: artist!.id,
-                        name: artist!.name,
-                        image: artist!.image,
-                    };
-                }),
-            };
-        });
+                        ...artist.artists
+                    }
+                })
+            }
+        })
 
-        response.status(201).json(tracksWithArtists);
-        
+        response.status(201).json(result);
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });
