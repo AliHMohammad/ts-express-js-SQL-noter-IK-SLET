@@ -98,11 +98,16 @@ async function getAllTracksFromSingleArtist(request: Request<{ artistId: string 
 //CREATE
 async function createTrack(request: Request<{}, {}, { title: string, duration: string, artists: Artists[], albums: Albums[] }, {}>, response: Response) {
     
+    const { title, artists, albums } = request.body;
+    const duration = parseInt(request.body.duration);
 
     
     try {
-        const { title, artists, albums } = request.body;
-        const duration = parseInt(request.body.duration);
+
+        if (!title || !duration) {
+            throw new Error("Missing title or duration parameter");
+        }
+
         
         const newTrack = trackRepository.create({
             title,
