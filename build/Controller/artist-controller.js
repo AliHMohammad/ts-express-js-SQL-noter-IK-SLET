@@ -1,5 +1,5 @@
 import { AppDataSource } from "../Database/data-source.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 const artistsRepository = AppDataSource.getRepository(Artists);
 //GET
 async function getAllArtists(request, response) {
@@ -90,7 +90,7 @@ async function createArtist(request, response) {
         }
         const newArtist = artistsRepository.create({
             name,
-            image
+            image,
         });
         await artistsRepository.save(newArtist);
         response.status(204).json({});

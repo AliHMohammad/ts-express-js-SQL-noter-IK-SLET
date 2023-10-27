@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../Database/data-source.js";
 import { Albums } from "../Model/Albums.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 
 const albumRepository = AppDataSource.getRepository(Albums);
@@ -71,23 +71,19 @@ async function getAllAlbums(request: Request<{}, {}, {}, {}>, response: Response
     }
 }
 
-
 //DELETE
 async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, response: Response) {
     const id = parseInt(request.params.albumId);
 
     try {
         //Sletter også på cascade (relations), da dette er angivet i vores entitites og vores SQL backend (datagrip)
-        const deleteResult = await albumRepository.createQueryBuilder("album")
-            .delete()
-            .where("id = :id", { id })
-            .execute();
+        const deleteResult = await albumRepository.createQueryBuilder("album").delete().where("id = :id", { id }).execute();
 
         if (deleteResult.affected === 0) {
             throw new Error("No album found by specified ID");
         }
 
-        response.status(204).json()
+        response.status(204).json();
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });
@@ -98,15 +94,16 @@ async function deleteAlbum(request: Request<{ albumId: string }, {}, {}, {}>, re
 }
 
 //UPDATE
-async function updateAlbum(request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists?: Artists[]; tracks?: Tracks[] }, {}>, response: Response) {
-
+async function updateAlbum(
+    request: Request<{ albumId: string }, {}, { title: string; yearOfRelease: string; image: string; artists?: Artists[]; tracks?: Tracks[] }, {}>,
+    response: Response
+) {
     const id = parseInt(request.params.albumId);
 
     const { title, image, artists, tracks } = request.body;
     const yearOfRelease = parseInt(request.body.yearOfRelease);
 
     try {
-        
         if (!title || !image || !yearOfRelease) {
             throw new Error("Parameters missing");
         }
@@ -118,7 +115,7 @@ async function updateAlbum(request: Request<{ albumId: string }, {}, { title: st
         });
 
         const updateResult = await albumRepository.createQueryBuilder("album").update().set(newAlbum).where("id = :id", { id }).execute();
-        
+
         if (updateResult.affected === 0) {
             throw new Error("Error at saving updated album");
         }
@@ -130,10 +127,10 @@ async function updateAlbum(request: Request<{ albumId: string }, {}, { title: st
             .innerJoinAndSelect("album.artists", "artists")
             .where("album.id = :id", { id })
             .getOneOrFail();
-        
+
         if (artists) {
             updatedAlbum.artists = artists;
-            
+
             if (tracks) {
                 updatedAlbum.tracks = tracks;
             }
@@ -141,7 +138,7 @@ async function updateAlbum(request: Request<{ albumId: string }, {}, { title: st
             await albumRepository.save(updatedAlbum);
         }
 
-        response.status(201).json({message: "Completed"});
+        response.status(201).json({ message: "Completed" });
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(400).json({ error: error.message });
@@ -152,7 +149,7 @@ async function updateAlbum(request: Request<{ albumId: string }, {}, { title: st
 }
 
 //CREATE
-async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelease: string, image: string;  artists: Artists[], tracks: Tracks[]}, {}>, response: Response) {
+async function createAlbum(request: Request<{}, {}, { title: string; yearOfRelease: string; image: string; artists: Artists[]; tracks: Tracks[] }, {}>, response: Response) {
     //Den her er i stand til at oprette helt nye sange, der ikke i forvejen eksisterer i databasen - dog med artister, der allerede eksisterer.
     const { title, image, artists, tracks } = request.body;
     const yearOfRelease = parseInt(request.body.yearOfRelease);
@@ -168,7 +165,7 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
             image,
             yearOfRelease,
             artists: [],
-            tracks: []
+            tracks: [],
         });
 
         const savedAlbum = await albumRepository.save(newAlbum);
@@ -182,19 +179,21 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
         );
 
         // 3. Create and Save Tracks
-        const savedTracks = await Promise.all(tracks.map(async (trackData) => {
-            const newTrack = trackRepository.create(trackData);
-            const savedTrack = await trackRepository.save(newTrack);
+        const savedTracks = await Promise.all(
+            tracks.map(async (trackData) => {
+                const newTrack = trackRepository.create(trackData);
+                const savedTrack = await trackRepository.save(newTrack);
 
-            // 3.5 Create and save artists and associate it with their track
-            savedTrack.artists.map(async (artistData) => {
-                const newArtist = artistsRepository.create(artistData);
-                const savedArtist = await artistsRepository.save(newArtist);
-                savedTrack.artists.push(savedArtist);
+                // 3.5 Create and save artists and associate it with their track
+                savedTrack.artists.map(async (artistData) => {
+                    const newArtist = artistsRepository.create(artistData);
+                    const savedArtist = await artistsRepository.save(newArtist);
+                    savedTrack.artists.push(savedArtist);
+                });
+
+                return savedTrack;
             })
-
-            return savedTrack
-        }))
+        );
 
         // 4. Associate Artists and Tracks with the Album
         savedAlbum.artists = savedArtists;
@@ -213,7 +212,6 @@ async function createAlbum(request: Request<{}, {}, { title: string, yearOfRelea
 
 //SEARCH
 async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, response: Response) {
-
     const query = request.query.q;
 
     try {
@@ -225,13 +223,12 @@ async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, respons
             .where("album.title LIKE :searchTerm", { searchTerm: `%${query}%` })
             .orderBy("album.title")
             .getMany();
-        
+
         if (albums.length === 0) {
             throw new Error("Could not find any match");
         } else {
             response.status(201).json(albums);
         }
-
     } catch (error: any) {
         if (error instanceof Error) {
             response.status(404).json({ error: error.message });
@@ -241,4 +238,4 @@ async function searchAlbums(request: Request<{}, {}, {}, { q: string }>, respons
     }
 }
 
-export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum, searchAlbums, updateAlbum};
+export { getAllAlbums, getSingleAlbum, deleteAlbum, createAlbum, searchAlbums, updateAlbum };

@@ -1,5 +1,5 @@
 import { AppDataSource } from "../Database/data-source.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 import { ILike } from "typeorm";
 const trackRepository = AppDataSource.getRepository(Tracks);
@@ -8,7 +8,8 @@ const artistsRepository = AppDataSource.getRepository(Artists);
 async function getSingleTrack(request, response) {
     try {
         const id = Number(request.params.trackId);
-        const track = await trackRepository.createQueryBuilder("tracks")
+        const track = await trackRepository
+            .createQueryBuilder("tracks")
             .innerJoinAndSelect("tracks.artists", "artists")
             .where("tracks.id = :id", { id })
             .orderBy("artists.name")
@@ -57,15 +58,16 @@ async function getAllTracksFromSingleArtist(request, response) {
     try {
         const artist = await artistsRepository.findOneOrFail({
             where: {
-                id: id
-            }
+                id: id,
+            },
         });
-        const tracks = await trackRepository.createQueryBuilder("tracks")
+        const tracks = await trackRepository
+            .createQueryBuilder("tracks")
             .select("tracks.id AS id, tracks.title AS title, tracks.duration AS duration")
             .innerJoin("tracks.artists", "artists")
             .where("artists.id = :id", { id })
             .orderBy({
-            "tracks.title": "ASC"
+            "tracks.title": "ASC",
         })
             .execute();
         artist.tracks = tracks;
@@ -89,7 +91,7 @@ async function createTrack(request, response) {
             title,
             duration,
             artists: artists ?? [],
-            albums: albums ?? []
+            albums: albums ?? [],
         });
         const savedTrack = await trackRepository.save(newTrack);
         response.status(201).json(savedTrack.id);
@@ -103,7 +105,7 @@ async function createTrack(request, response) {
         }
     }
 }
-//DELETE 
+//DELETE
 async function deleteTrack(request, response) {
     const id = parseInt(request.params.trackId);
     try {
@@ -165,8 +167,8 @@ async function searchTracks(request, response) {
             relations: ["artists", "albums"],
             order: {
                 //Order by track
-                title: "ASC"
-            }
+                title: "ASC",
+            },
         });
         if (tracks.length === 0) {
             throw new Error("Could not find any tracks with query");

@@ -1,6 +1,6 @@
 import { AppDataSource } from "../Database/data-source.js";
 import { Albums } from "../Model/Albums.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 import { ILike } from "typeorm";
 const albumRepository = AppDataSource.getRepository(Albums);
@@ -12,15 +12,15 @@ async function searchAll(request, response) {
         const result = {
             tracks: [],
             albums: [],
-            artists: []
+            artists: [],
         };
         const tracks = await trackRepository.find({
             where: {
-                title: ILike(`%${q}%`)
+                title: ILike(`%${q}%`),
             },
             order: {
-                title: "ASC"
-            }
+                title: "ASC",
+            },
         });
         const albums = await albumRepository.find({
             where: {

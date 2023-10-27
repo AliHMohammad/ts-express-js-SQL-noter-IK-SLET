@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./Database/data-source.js";
-import { artistRouter } from "./Route/artist-router.js";
+import { artistRouter } from "./Artist/Router/ArtistRouter.js";
 import { albumRouter } from "./Route/album-route.js";
 import { trackRouter } from "./Route/track-route.js";
 import { otherRouter } from "./Route/other-route.js";

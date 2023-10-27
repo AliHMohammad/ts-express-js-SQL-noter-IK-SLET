@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../Database/data-source.js";
 import { Albums } from "../Model/Albums.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 import { ILike } from "typeorm";
 
@@ -10,18 +10,17 @@ const artistsRepository = AppDataSource.getRepository(Artists);
 
 //GET SINGLE
 async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>, response: Response) {
-    
     try {
         const id = Number(request.params.trackId);
 
-        const track = await trackRepository.createQueryBuilder("tracks")
+        const track = await trackRepository
+            .createQueryBuilder("tracks")
             .innerJoinAndSelect("tracks.artists", "artists")
             .where("tracks.id = :id", { id })
             .orderBy("artists.name")
             .getOneOrFail();
-        
-        response.status(201).json(track);
 
+        response.status(201).json(track);
     } catch (error: any) {
         switch (error.name) {
             case "EntityNotFoundError":
@@ -36,9 +35,7 @@ async function getSingleTrack(request: Request<{ trackId: string }, {}, {}, {}>,
 
 //GET ALL
 async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response) {
-    
     try {
-        
         const albums = await trackRepository
             .createQueryBuilder("tracks")
             .innerJoinAndSelect("tracks.artists", "artists")
@@ -47,7 +44,7 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
                 "artists.name": "ASC",
             })
             .getMany();
-        
+
         if (albums.length === 0) {
             throw new Error("No albums found");
         }
@@ -64,27 +61,27 @@ async function getAllTracks(request: Request<{}, {}, {}, {}>, response: Response
 
 //GET ALL TRACKS WITH THIS ARTIST
 async function getAllTracksFromSingleArtist(request: Request<{ artistId: string }, {}, {}, {}>, response: Response) {
-
     const id = parseInt(request.params.artistId);
 
     try {
         const artist = await artistsRepository.findOneOrFail({
             where: {
-                id: id
-            }
-        })
-        
-        const tracks = await trackRepository.createQueryBuilder("tracks")
-        .select("tracks.id AS id, tracks.title AS title, tracks.duration AS duration")
-        .innerJoin("tracks.artists", "artists")
-        .where("artists.id = :id", { id })
-        .orderBy({
-            "tracks.title": "ASC"
-        })
-        .execute()
-        
+                id: id,
+            },
+        });
+
+        const tracks = await trackRepository
+            .createQueryBuilder("tracks")
+            .select("tracks.id AS id, tracks.title AS title, tracks.duration AS duration")
+            .innerJoin("tracks.artists", "artists")
+            .where("artists.id = :id", { id })
+            .orderBy({
+                "tracks.title": "ASC",
+            })
+            .execute();
+
         artist.tracks = tracks;
-        
+
         response.status(201).json(artist);
     } catch (error: any) {
         if (error instanceof Error) {
@@ -96,20 +93,17 @@ async function getAllTracksFromSingleArtist(request: Request<{ artistId: string 
 }
 
 //CREATE
-async function createTrack(request: Request<{}, {}, { title: string, duration: string, artists: Artists[], albums: Albums[] }, {}>, response: Response) {
-    
-
-    
+async function createTrack(request: Request<{}, {}, { title: string; duration: string; artists: Artists[]; albums: Albums[] }, {}>, response: Response) {
     try {
         const { title, artists, albums } = request.body;
         const duration = parseInt(request.body.duration);
-        
+
         const newTrack = trackRepository.create({
             title,
             duration,
             artists: artists ?? [],
-            albums: albums ?? []
-        })
+            albums: albums ?? [],
+        });
 
         const savedTrack = await trackRepository.save(newTrack);
 
@@ -123,9 +117,8 @@ async function createTrack(request: Request<{}, {}, { title: string, duration: s
     }
 }
 
-//DELETE 
-async function deleteTrack(request: Request<{trackId : string}, {}, {}, {}>, response: Response) {
-
+//DELETE
+async function deleteTrack(request: Request<{ trackId: string }, {}, {}, {}>, response: Response) {
     const id = parseInt(request.params.trackId);
 
     try {
@@ -147,11 +140,9 @@ async function deleteTrack(request: Request<{trackId : string}, {}, {}, {}>, res
 }
 
 //UPDATE
-async function updateTrack(request: Request<{trackId: string}, {}, { title: string; duration: string; artists?: Artists[]; albums?: Albums[] }, {}>, response: Response) {
-    
+async function updateTrack(request: Request<{ trackId: string }, {}, { title: string; duration: string; artists?: Artists[]; albums?: Albums[] }, {}>, response: Response) {
     const id = parseInt(request.params.trackId);
 
-    
     try {
         const duration = parseInt(request.body.duration);
         const { title, artists, albums } = request.body;
@@ -182,12 +173,10 @@ async function updateTrack(request: Request<{trackId: string}, {}, { title: stri
             response.status(500).json({ error: error.message });
         }
     }
-
 }
 
 //SEARCH
-async function searchTracks(request: Request<{}, {}, {}, {q: string}>, response: Response) {
-    
+async function searchTracks(request: Request<{}, {}, {}, { q: string }>, response: Response) {
     const q = request.query.q;
 
     try {
@@ -198,8 +187,8 @@ async function searchTracks(request: Request<{}, {}, {}, {q: string}>, response:
             relations: ["artists", "albums"],
             order: {
                 //Order by track
-                title: "ASC"
-            }
+                title: "ASC",
+            },
         });
 
         if (tracks.length === 0) {
@@ -215,6 +204,5 @@ async function searchTracks(request: Request<{}, {}, {}, {q: string}>, response:
         }
     }
 }
-
 
 export { getAllTracks, getSingleTrack, createTrack, deleteTrack, searchTracks, updateTrack, getAllTracksFromSingleArtist };

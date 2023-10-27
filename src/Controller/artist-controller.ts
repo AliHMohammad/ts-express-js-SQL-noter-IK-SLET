@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../Database/data-source.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import Debug from "debug";
 
 const artistsRepository = AppDataSource.getRepository(Artists);
@@ -52,7 +52,7 @@ async function deleteArtist(request: Request<{ artistId: string }, {}, {}, {}>, 
 
         //Sletter også på cascade, da dette er angivet i vores entitites og vores SQL backend (datagrip)
         const deleteResult = await artistsRepository.createQueryBuilder("artist").delete().where("id = :id", { id: requestId }).execute();
-        
+
         console.log(deleteResult.affected);
         //1
 
@@ -92,19 +92,18 @@ async function updateArtist(request: Request<{ artistId: string }, {}, { name: s
 
 //CREATE
 async function createArtist(request: Request<{}, {}, { name: string; image: string }, {}>, response: Response) {
-    
     const { name, image } = request.body;
 
     try {
         if (!name || !image) {
             throw new Error("Missing parameters");
         }
-    
+
         const newArtist = artistsRepository.create({
             name,
-            image
-        })
-    
+            image,
+        });
+
         await artistsRepository.save(newArtist);
 
         response.status(204).json({});

@@ -1,6 +1,6 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Tracks } from "./Tracks.js";
-import { Artists } from "./Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 
 @Index("title", ["title"], { unique: true })
 @Entity("albums", { schema: "music_base_db" })
@@ -27,7 +27,7 @@ export class Albums {
     })
     image!: string | null;
 
-    @ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true, onDelete: 'CASCADE' })
+    @ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true, onDelete: "CASCADE" })
     @JoinTable({
         name: "albums_tracks",
         joinColumns: [{ name: "album_id", referencedColumnName: "id" }],

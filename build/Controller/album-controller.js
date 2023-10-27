@@ -1,6 +1,6 @@
 import { AppDataSource } from "../Database/data-source.js";
 import { Albums } from "../Model/Albums.js";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Tracks } from "../Model/Tracks.js";
 const albumRepository = AppDataSource.getRepository(Albums);
 const artistsRepository = AppDataSource.getRepository(Artists);
@@ -69,10 +69,7 @@ async function deleteAlbum(request, response) {
     const id = parseInt(request.params.albumId);
     try {
         //Sletter også på cascade (relations), da dette er angivet i vores entitites og vores SQL backend (datagrip)
-        const deleteResult = await albumRepository.createQueryBuilder("album")
-            .delete()
-            .where("id = :id", { id })
-            .execute();
+        const deleteResult = await albumRepository.createQueryBuilder("album").delete().where("id = :id", { id }).execute();
         if (deleteResult.affected === 0) {
             throw new Error("No album found by specified ID");
         }
@@ -146,7 +143,7 @@ async function createAlbum(request, response) {
             image,
             yearOfRelease,
             artists: [],
-            tracks: []
+            tracks: [],
         });
         const savedAlbum = await albumRepository.save(newAlbum);
         // 2. Create and Save Artists

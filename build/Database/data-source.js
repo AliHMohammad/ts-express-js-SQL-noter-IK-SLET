@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { Artists } from "../Model/Artists.js";
+import { Artists } from "../Artist/Model/Artists.js";
 import { Albums } from "../Model/Albums.js";
 import { Tracks } from "../Model/Tracks.js";
 import "reflect-metadata";

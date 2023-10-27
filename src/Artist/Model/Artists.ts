@@ -1,6 +1,6 @@
 import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Albums } from "./Albums.js";
-import { Tracks } from "./Tracks.js";
+import { Albums } from "../../Model/Albums.js";
+import { Tracks } from "../../Model/Tracks.js";
 
 @Index("name", ["name"], { unique: true })
 @Entity("artists", { schema: "music_base_db" })
