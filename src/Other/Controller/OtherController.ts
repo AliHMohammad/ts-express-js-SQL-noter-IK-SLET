@@ -2,7 +2,9 @@ import {query, Request, Response} from "express";
 import {Tracks} from "../../Track/Model/Tracks.js";
 import {Albums} from "../../Album/Model/Albums.js";
 import {Artists} from "../../Artist/Model/Artists.js";
-import OtherService from "../Service/OtherService.js";
+import ArtistService from "../../Artist/Service/ArtistService.js";
+import TrackService from "../../Track/Service/TrackService.js";
+import AlbumService from "../../Album/Service/AlbumService.js";
 
 
 
@@ -12,9 +14,9 @@ export default class OtherController {
 
     public async searchAllExecutor(request: Request<{},{},{},{q: string}>, response: Response){
         type Result = {
-            tracks?: Tracks[];
-            albums?: Albums[];
-            artists?: Artists[];
+            tracks: Tracks[];
+            albums: Albums[];
+            artists: Artists[];
         };
 
         const query = request.query.q;
@@ -22,8 +24,19 @@ export default class OtherController {
         try {
             if (!query) throw new Error("Query is missing");
 
-            const apiService = new OtherService();
-            const result: Result = await apiService.searchAll(query);
+            const apiArtists = new ArtistService()
+            const apiTracks = new TrackService();
+            const apiAlbums = new AlbumService()
+
+            const result: Result = {
+                tracks: [],
+                albums: [],
+                artists: []
+            }
+
+            result.albums = await apiAlbums.searchAlbums(query);
+            result.tracks = await apiTracks.searchTracks(query);
+            result.artists = await apiArtists.searchArtists(query);
 
             response.status(201).json(result);
         } catch (error: any) {
