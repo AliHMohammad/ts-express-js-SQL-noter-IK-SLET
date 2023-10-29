@@ -2,7 +2,7 @@ import { ILike } from "typeorm";
 import { Tracks } from "../Model/Tracks.js";
 import { AppDataSource } from "../Database/data-source.js";
 import { Artists } from "../Model/Artists.js";
-export default class TrackService {
+export default class TrackRepository {
     repository;
     constructor() {
         this.repository = AppDataSource.getRepository(Tracks);

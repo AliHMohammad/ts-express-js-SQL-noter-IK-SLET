@@ -1,4 +1,4 @@
-import TrackService from "../Service/TrackService.js";
+import TrackRepository from "../Repository/TrackRepository.js";
 export default class TrackController {
     constructor() { }
     ;
@@ -8,8 +8,8 @@ export default class TrackController {
             if (!id) {
                 throw new Error("Id is missing");
             }
-            const apiService = new TrackService();
-            const tracks = await apiService.getSingleTrack(id);
+            const trackRepository = new TrackRepository();
+            const tracks = await trackRepository.getSingleTrack(id);
             response.status(201).json(tracks);
         }
         catch (error) {
@@ -28,8 +28,8 @@ export default class TrackController {
     }
     async getAllTracksExecutor(request, response) {
         try {
-            const apiService = new TrackService();
-            const tracks = await apiService.getAllTacks();
+            const trackRepository = new TrackRepository();
+            const tracks = await trackRepository.getAllTacks();
             response.status(201).json(tracks);
         }
         catch (error) {
@@ -51,8 +51,8 @@ export default class TrackController {
         try {
             if (!id)
                 throw new Error("ID is missing");
-            const apiService = new TrackService();
-            await apiService.deleteTrack(id);
+            const trackRepository = new TrackRepository();
+            await trackRepository.deleteTrack(id);
             response.status(204).json();
         }
         catch (error) {
@@ -75,8 +75,8 @@ export default class TrackController {
         try {
             if (!id || !duration || !title || !artists)
                 throw new Error("Missing parameters");
-            const apiService = new TrackService();
-            const updatedTrack = await apiService.updateTrack(id, title, duration, artists, albums);
+            const trackRepository = new TrackRepository();
+            const updatedTrack = await trackRepository.updateTrack(id, title, duration, artists, albums);
             response.status(201).json(updatedTrack);
         }
         catch (error) {
@@ -98,8 +98,8 @@ export default class TrackController {
         try {
             if (!title || !duration)
                 throw new Error("Missing parameters");
-            const apiService = new TrackService();
-            const track = await apiService.createTrack(title, duration, artists, albums);
+            const trackRepository = new TrackRepository();
+            const track = await trackRepository.createTrack(title, duration, artists, albums);
             response.status(201).json(track);
         }
         catch (error) {
@@ -121,8 +121,8 @@ export default class TrackController {
         try {
             if (!query)
                 throw new Error("Missing query");
-            const apiService = new TrackService();
-            const tracks = await apiService.searchTracks(query);
+            const trackRepository = new TrackRepository();
+            const tracks = await trackRepository.searchTracks(query);
             response.status(201).json(tracks);
         }
         catch (error) {
@@ -144,8 +144,8 @@ export default class TrackController {
         try {
             if (!id)
                 throw new Error("artistId is missing");
-            const apiService = new TrackService();
-            const tracks = await apiService.getAllTracksFromArtist(id);
+            const trackRepository = new TrackRepository();
+            const tracks = await trackRepository.getAllTracksFromArtist(id);
             response.status(201).json(tracks);
         }
         catch (error) {

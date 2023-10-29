@@ -1,11 +1,11 @@
-import AlbumService from "../Service/AlbumService.js";
+import AlbumRepository from "../Repository/AlbumRepository.js";
 export default class AlbumController {
     constructor() { }
     ;
     async getAllAlbumsExecutor(request, response) {
         try {
-            const apiService = new AlbumService();
-            const albums = await apiService.getAllAlbums();
+            const albumRepository = new AlbumRepository();
+            const albums = await albumRepository.getAllAlbums();
             response.status(201).json(albums);
         }
         catch (error) {
@@ -23,8 +23,8 @@ export default class AlbumController {
             if (!id) {
                 throw new Error("Id is not a number");
             }
-            const apiService = new AlbumService();
-            const album = await apiService.getSingleAlbum(id);
+            const albumRepository = new AlbumRepository();
+            const album = await albumRepository.getSingleAlbum(id);
             response.status(201).json(album);
         }
         catch (error) {
@@ -39,8 +39,8 @@ export default class AlbumController {
     async deleteAlbumExecutor(request, response) {
         const id = parseInt(request.params.albumId);
         try {
-            const apiService = new AlbumService();
-            await apiService.deleteAlbum(id);
+            const albumRepository = new AlbumRepository();
+            await albumRepository.deleteAlbum(id);
             response.status(204).json();
         }
         catch (error) {
@@ -59,8 +59,8 @@ export default class AlbumController {
             if (!title || !image || !yearOfRelease) {
                 throw new Error("Missing parameters");
             }
-            const apiService = new AlbumService();
-            const createdAlbum = await apiService.createAlbum(title, yearOfRelease, image, artists, tracks);
+            const albumRepository = new AlbumRepository();
+            const createdAlbum = await albumRepository.createAlbum(title, yearOfRelease, image, artists, tracks);
             response.status(201).json(createdAlbum);
         }
         catch (error) {
@@ -80,8 +80,8 @@ export default class AlbumController {
             if (!title || !image || !yearOfRelease) {
                 throw new Error("Missing parameters");
             }
-            const apiService = new AlbumService();
-            const updateResult = await apiService.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+            const albumRepository = new AlbumRepository();
+            const updateResult = await albumRepository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
             response.status(201).json(updateResult);
         }
         catch (error) {
@@ -99,8 +99,8 @@ export default class AlbumController {
             if (!query) {
                 throw new Error("Query missing");
             }
-            const apiService = new AlbumService();
-            const albums = await apiService.searchAlbums(query);
+            const albumRepository = new AlbumRepository();
+            const albums = await albumRepository.searchAlbums(query);
             response.status(201).json(albums);
         }
         catch (error) {

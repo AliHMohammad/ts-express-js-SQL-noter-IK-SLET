@@ -1,6 +1,6 @@
-import ArtistService from "../Service/ArtistService.js";
-import TrackService from "../Service/TrackService.js";
-import AlbumService from "../Service/AlbumService.js";
+import ArtistRepository from "../Repository/ArtistRepository.js";
+import TrackRepository from "../Repository/TrackRepository.js";
+import AlbumRepository from "../Repository/AlbumRepository.js";
 export default class OtherController {
     constructor() { }
     ;
@@ -9,17 +9,17 @@ export default class OtherController {
         try {
             if (!query)
                 throw new Error("Query is missing");
-            const apiArtists = new ArtistService();
-            const apiTracks = new TrackService();
-            const apiAlbums = new AlbumService();
+            const artistRepository = new ArtistRepository();
+            const trackRepository = new TrackRepository();
+            const albumRepository = new AlbumRepository();
             const result = {
                 tracks: [],
                 albums: [],
                 artists: []
             };
-            result.albums = await apiAlbums.searchAlbums(query);
-            result.tracks = await apiTracks.searchTracks(query);
-            result.artists = await apiArtists.searchArtists(query);
+            result.albums = await albumRepository.searchAlbums(query);
+            result.tracks = await trackRepository.searchTracks(query);
+            result.artists = await artistRepository.searchArtists(query);
             response.status(201).json(result);
         }
         catch (error) {

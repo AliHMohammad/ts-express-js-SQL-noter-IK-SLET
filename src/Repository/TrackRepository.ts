@@ -5,7 +5,7 @@ import {Artists} from "../Model/Artists.js";
 import {Albums} from "../Model/Albums.js";
 
 
-export default class TrackService {
+export default class TrackRepository {
     private repository: Repository<Tracks>;
     constructor() {
         this.repository = AppDataSource.getRepository(Tracks);

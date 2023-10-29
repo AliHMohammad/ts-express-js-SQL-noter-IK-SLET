@@ -1,11 +1,11 @@
 import {Request, Response} from "express";
-import ArtistService from "../Service/ArtistService.js";
+import ArtistRepository from "../Repository/ArtistRepository.js";
 
 export default class ArtistController {
     public async getAllArtistsExecutor(request: Request<{}, {}, {}, {}>, response: Response) {
         try {
-            const apiService = new ArtistService();
-            const artists = await apiService.getAllArtists();
+            const artistRepository = new ArtistRepository();
+            const artists = await artistRepository.getAllArtists();
 
             response.status(201).json(artists);
         } catch (error: any) {
@@ -25,8 +25,8 @@ export default class ArtistController {
                 throw new Error("id is not a number");
             }
 
-            const apiService = new ArtistService();
-            const artist = await apiService.getSingleArtist(id);
+            const artistRepository = new ArtistRepository();
+            const artist = await artistRepository.getSingleArtist(id);
 
             response.status(201).json(artist);
         } catch (error: any) {
@@ -52,8 +52,8 @@ export default class ArtistController {
                 throw new Error("Missing parameters");
             }
 
-            const apiService = new ArtistService();
-            await apiService.createArtist(name, image);
+            const artistRepository = new ArtistRepository();
+            await artistRepository.createArtist(name, image);
 
             response.status(204).json();
         } catch (error: any) {
@@ -73,8 +73,8 @@ export default class ArtistController {
                 throw new Error("id is not a number");
             }
 
-            const apiService = new ArtistService();
-            await apiService.deleteArtist(id);
+            const artistRepository = new ArtistRepository();
+            await artistRepository.deleteArtist(id);
 
             response.status(204).json();
         } catch (error: any) {
@@ -95,8 +95,8 @@ export default class ArtistController {
                 throw new Error("Missing parameters");
             }
 
-            const apiService = new ArtistService();
-            const updateResult = apiService.updateArtist(id, name, image);
+            const artistRepository = new ArtistRepository();
+            const updateResult = artistRepository.updateArtist(id, name, image);
 
             response.status(201).json(updateResult);
         } catch (error: any) {
@@ -117,8 +117,8 @@ export default class ArtistController {
                 throw new Error("Query missing");
             }
 
-            const apiService = new ArtistService();
-            const artists = await apiService.searchArtists(query);
+            const artistRepository = new ArtistRepository();
+            const artists = await artistRepository.searchArtists(query);
 
             response.status(201).json(artists);
         } catch (error: any) {

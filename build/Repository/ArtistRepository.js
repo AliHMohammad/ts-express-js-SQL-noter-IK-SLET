@@ -1,70 +1,54 @@
-import {ILike, Repository, UpdateResult} from "typeorm";
+import { ILike } from "typeorm";
 import { Artists } from "../Model/Artists.js";
 import { AppDataSource } from "../Database/data-source.js";
-
-
-export default class ArtistService {
-    private repository: Repository<Artists>;
+export default class ArtistRepository {
+    repository;
     constructor() {
         this.repository = AppDataSource.getRepository(Artists);
     }
-
-    public async getAllArtists(): Promise<Artists[]> {
+    async getAllArtists() {
         const artists = await this.repository.find({
             order: {
                 name: "ASC",
             },
         });
-
         if (!artists.length) {
             throw new Error("No artists found");
         }
-        
         return artists;
     }
-
-    public async getSingleArtist(id: number): Promise<Artists> {
+    async getSingleArtist(id) {
         return await this.repository.findOneByOrFail({
             id
-        })
+        });
     }
-
-    public async createArtist(name: string, image: string): Promise<void> {
+    async createArtist(name, image) {
         const artist = new Artists();
         artist.name = name;
         artist.image = image;
-
         await this.repository.save(artist);
     }
-
-    public async deleteArtist(id: number): Promise<void> {
+    async deleteArtist(id) {
         const deleteResult = await this.repository.createQueryBuilder("artist").delete().where("id = :id", { id: id }).execute();
-
         if (deleteResult.affected === 0) {
             throw new Error("Could not delete artist with specified ID");
         }
     }
-
-    public async updateArtist(id: number, name: string, image: string): Promise<UpdateResult> {
-
+    async updateArtist(id, name, image) {
         const updateResult = await this.repository.createQueryBuilder("artists")
             .update()
             .set({
-                name,
-                image
-            })
-            .where("id = :id", {id})
+            name,
+            image
+        })
+            .where("id = :id", { id })
             .execute();
-
         if (updateResult.affected === 0) {
             throw new Error("Could not update artist with specified ID");
         }
-
         return updateResult;
     }
-
-    public async searchArtists(query: string) {
-
+    async searchArtists(query) {
         const artists = await this.repository.find({
             where: {
                 name: ILike(`%${query}%`)
@@ -72,10 +56,8 @@ export default class ArtistService {
             order: {
                 name: "ASC"
             }
-        })
-
+        });
         /*Med QueryBuilder:*/
-
         // const artists: Artists[] = await this.repository
         //     .createQueryBuilder("artists")
         //     .where("name LIKE :search", {search: `%${query}%`})
@@ -83,7 +65,6 @@ export default class ArtistService {
         //         name: "ASC"
         //     })
         //     .getMany()
-
         return artists;
     }
 }
