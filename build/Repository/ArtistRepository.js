@@ -26,6 +26,9 @@ export default class ArtistRepository {
         return prisma.artists.findMany({
             where: {
                 name: { contains: query }
+            },
+            orderBy: {
+                name: "asc"
             }
         });
     }

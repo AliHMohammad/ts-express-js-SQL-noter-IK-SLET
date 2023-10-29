@@ -10,7 +10,7 @@ datasource db {
 model albums {
   id              Int              @id @default(autoincrement())
   title           String           @unique() @db.VarChar(255)
-  year_of_release Int
+  yearOfRelease Int                @map(name: "year_of_release")
   image           String?          @default("anon-billed") @db.VarChar(1000)
   tracks   albums_tracks[]
   artists  artists_albums[]
