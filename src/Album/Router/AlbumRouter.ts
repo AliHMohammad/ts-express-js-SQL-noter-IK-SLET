@@ -1,5 +1,4 @@
 import express from "express";
-import { createAlbum, deleteAlbum, getAllAlbums, getSingleAlbum, searchAlbums, updateAlbum } from "../../Controller/album-controller.js";
 import AlbumController from "../Controller/AlbumController.js";
 
 const albumController = new AlbumController();
