@@ -23,11 +23,10 @@ export default class ArtistService {
         });
     }
     async createArtist(name, image) {
-        const newArtist = this.repository.create({
-            name,
-            image,
-        });
-        await this.repository.save(newArtist);
+        const artist = new Artists();
+        artist.name = name;
+        artist.image = image;
+        await this.repository.save(artist);
     }
     async deleteArtist(id) {
         const deleteResult = await this.repository.createQueryBuilder("artist").delete().where("id = :id", { id: id }).execute();

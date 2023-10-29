@@ -30,12 +30,11 @@ export default class ArtistService {
     }
 
     public async createArtist(name: string, image: string): Promise<void> {
-        const newArtist = this.repository.create({
-            name,
-            image,
-        });
+        const artist = new Artists();
+        artist.name = name;
+        artist.image = image;
 
-        await this.repository.save(newArtist);
+        await this.repository.save(artist);
     }
 
     public async deleteArtist(id: number): Promise<void> {
