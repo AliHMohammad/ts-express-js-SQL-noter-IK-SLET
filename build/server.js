@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./Database/data-source.js";
-import { artistRouter } from "./Artist/Router/ArtistRouter.js";
-import { albumRouter } from "./Album/Router/AlbumRouter.js";
-import { trackRouter } from "./Track/Router/TrackRouter.js";
-import { otherRouter } from "./Other/Router/OtherRouter.js";
+import { artistRouter } from "./Router/ArtistRouter.js";
+import { albumRouter } from "./Router/AlbumRouter.js";
+import { trackRouter } from "./Router/TrackRouter.js";
+import { otherRouter } from "./Router/OtherRouter.js";
 //IMPORTER "reflect-metadata"
 import "reflect-metadata";
 const app = express();
