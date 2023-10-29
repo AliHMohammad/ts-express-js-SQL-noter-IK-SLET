@@ -147,7 +147,7 @@ export default class AlbumService {
     }
 
     public async searchAlbums(query: string){
-        const albums = await this.repository.find({
+        return await this.repository.find({
             relations: {
                 tracks: true,
                 artists: true
@@ -165,11 +165,5 @@ export default class AlbumService {
                 }
             }
         });
-
-        if (!albums.length) {
-            throw new Error("Could not find any albums");
-        }
-
-        return albums;
     }
 }

@@ -84,11 +84,6 @@ export default class ArtistService {
         //     })
         //     .getMany()
 
-
-        if (!artists.length){
-            throw new Error("Could not find any artists");
-        }
-
         return artists;
     }
 }

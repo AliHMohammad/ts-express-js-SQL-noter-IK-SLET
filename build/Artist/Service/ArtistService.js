@@ -65,9 +65,6 @@ export default class ArtistService {
         //         name: "ASC"
         //     })
         //     .getMany()
-        if (!artists.length) {
-            throw new Error("Could not find any artists");
-        }
         return artists;
     }
 }
