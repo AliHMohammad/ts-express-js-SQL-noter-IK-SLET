@@ -1,6 +1,6 @@
 import { AppDataSource } from "../Database/data-source.js";
 import { Artists } from "../Artist/Model/Artists.js";
-import { Tracks } from "../Model/Tracks.js";
+import { Tracks } from "../Track/Model/Tracks.js";
 import { ILike } from "typeorm";
 const trackRepository = AppDataSource.getRepository(Tracks);
 const artistsRepository = AppDataSource.getRepository(Artists);

@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import AlbumService from "../Service/AlbumService.js";
 import {Artists} from "../../Artist/Model/Artists";
 import {Albums} from "../Model/Albums";
-import {Tracks} from "../../Model/Tracks";
+import {Tracks} from "../../Track/Model/Tracks";
 
 export default class AlbumController {
     constructor(){};

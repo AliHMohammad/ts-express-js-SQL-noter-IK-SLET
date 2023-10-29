@@ -2,7 +2,7 @@ import {ILike, Repository} from "typeorm";
 import {Albums} from "../Model/Albums.js";
 import {AppDataSource} from "../../Database/data-source.js";
 import {Artists} from "../../Artist/Model/Artists.js";
-import {Tracks} from "../../Model/Tracks.js";
+import {Tracks} from "../../Track/Model/Tracks.js";
 
 
 export default class AlbumService {

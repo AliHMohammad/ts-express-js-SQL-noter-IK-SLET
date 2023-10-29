@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Albums } from "../../Album/Model/Albums.js";
-import { Tracks } from "../../Model/Tracks.js";
+import { Tracks } from "../../Track/Model/Tracks.js";
 let Artists = class Artists {
     id;
     name;
