@@ -33,7 +33,7 @@ export default class ArtistRepository {
         });
     }
     async deleteArtist(id) {
-        prisma.artists.delete({
+        await prisma.artists.delete({
             where: {
                 id
             }

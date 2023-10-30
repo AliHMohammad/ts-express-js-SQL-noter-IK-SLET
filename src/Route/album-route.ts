@@ -9,12 +9,12 @@ albumRouter.get("/albums/:albumId", albumController.getSingleAlbumExecutor);
 
 albumRouter.get("/albums", albumController.getAllAlbumsExecutor);
 
-albumRouter.delete("/albums/:albumId", deleteAlbum);
+albumRouter.delete("/albums/:albumId", albumController.deleteAlbumExecutor);
 
 albumRouter.post("/albums", createAlbum)
 
 albumRouter.put("/albums/:albumId", updateAlbum);
 
-albumRouter.get("/search/albums", searchAlbums);
+albumRouter.get("/search/albums", albumController.searchAlbumsExecutor);
 
 export { albumRouter };

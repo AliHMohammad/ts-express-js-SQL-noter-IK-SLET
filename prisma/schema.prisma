@@ -10,26 +10,26 @@ datasource db {
 model albums {
   id              Int              @id @default(autoincrement())
   title           String           @unique() @db.VarChar(255)
-  yearOfRelease Int                @map(name: "year_of_release")
+  yearOfRelease   Int              @map(name: "year_of_release")
   image           String?          @default("anon-billed") @db.VarChar(1000)
-  tracks   albums_tracks[]
-  artists  artists_albums[]
+  tracks          albums_tracks[]
+  artists         artists_albums[]
 }
 
 model artists {
   id             Int              @id @default(autoincrement())
   name           String           @unique() @db.VarChar(255)
   image          String?          @default("anon-billed") @db.VarChar(1000)
-  albums artists_albums[]
-  tracks artists_tracks[]
+  albums         artists_albums[]
+  tracks         artists_tracks[]
 }
 
 model tracks {
   id             Int              @id @default(autoincrement())
   title          String           @db.VarChar(255)
   duration       Int
-  albums  albums_tracks[]
-  artists artists_tracks[]
+  albums         albums_tracks[]
+  artists        artists_tracks[]
 }
 
 model albums_tracks {
