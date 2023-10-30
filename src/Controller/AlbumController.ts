@@ -1,5 +1,7 @@
 import {Request, Response} from "express";
 import AlbumRepository from "../Repository/AlbumRepository.js";
+import {tracks} from "@prisma/client";
+import prisma from "../Database/data-source";
 
 
 
@@ -156,4 +158,62 @@ export default class AlbumController {
             }
         }
     }
+
+    public async createAlbumExecutor(request: Request<{},{},{title: string, image: string, yearOfRelease: number, artists: Artist[], tracks: tracks[]},{}>, response: Response) {
+        const {title, image, yearOfRelease, artists, tracks} = request.body;
+
+        try {
+            if (!title || !image || !yearOfRelease || !artists || !tracks) throw new Error("Missing parameters");
+
+            const repository = new AlbumRepository();
+            const result = await repository.createAlbum(title, yearOfRelease, image, artists, tracks);
+
+            response.status(201).json(result);
+        } catch (error: any) {
+            console.log(error)
+            if (error instanceof Error){
+                response.status(404).json({error: error.message});
+            } else {
+                response.status(500).json({error: error.message});
+            }
+        }
+
+
+    }
+
+
+
+
+
+
+
+    // const album = await prisma.albums.create({
+    //     data: {
+    //         title,
+    //         yearOfRelease,
+    //         image,
+    //         artists: {
+    //             connect: [{
+    //                 id: 1
+    //             }],
+    //         },
+    //         tracks: {
+    //             connect: [{
+    //                 album_id_track_id: {
+    //                     artist_id:
+    //                 }
+    //             }]
+    //         },
+    //     },
+    // });
+    //
+    // return album
+
+
+
+
+
+
 }
+
+

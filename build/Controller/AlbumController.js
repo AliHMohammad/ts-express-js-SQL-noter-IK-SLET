@@ -146,4 +146,23 @@ export default class AlbumController {
             }
         }
     }
+    async createAlbumExecutor(request, response) {
+        const { title, image, yearOfRelease, artists, tracks } = request.body;
+        try {
+            if (!title || !image || !yearOfRelease || !artists || !tracks)
+                throw new Error("Missing parameters");
+            const repository = new AlbumRepository();
+            const result = await repository.createAlbum(title, yearOfRelease, image, artists, tracks);
+            response.status(201).json(result);
+        }
+        catch (error) {
+            console.log(error);
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            }
+            else {
+                response.status(500).json({ error: error.message });
+            }
+        }
+    }
 }

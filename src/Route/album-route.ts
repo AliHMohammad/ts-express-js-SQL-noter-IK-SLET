@@ -11,7 +11,7 @@ albumRouter.get("/albums", albumController.getAllAlbumsExecutor);
 
 albumRouter.delete("/albums/:albumId", albumController.deleteAlbumExecutor);
 
-albumRouter.post("/albums", createAlbum)
+albumRouter.post("/albums", albumController.createAlbumExecutor)
 
 albumRouter.put("/albums/:albumId", updateAlbum);
 
