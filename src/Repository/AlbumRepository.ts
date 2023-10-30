@@ -151,51 +151,35 @@ export default class AlbumRepository {
         console.log(tracks.map((track: Track) => ({ id: track.id })))
 
 
-        // Step 1: Create the Album
-        const createdAlbum = await prisma.albums.create({
+        const album = await prisma.albums.create({
             data: {
                 title,
                 yearOfRelease,
                 image,
-            },
-        });
-
-        // Step 2: Connect Artists and Tracks to the Album using the obtained album.id
-        await prisma.albums.update({
-            where: { id: createdAlbum.id },
-            data: {
                 artists: {
-                    connectOrCreate: {
-                        where: {
+                    connect: [
+                        {
                             artist_id_album_id: {
-                                artist_id: 1, // Replace with the actual artist_id
-                                album_id: createdAlbum.id,
-                            },
-                        },
-                        create: {
-                            name: "bib",
-                            image: "bob",
-                        },
-                    },
+                                artist_id: 4,
+                                album_id: 2
+                            }
+                        }
+                    ],
                 },
                 tracks: {
-                    connectOrCreate: {
-                        where: {
+                    connect: [
+                        {
                             album_id_track_id: {
-                                track_id: 1, // Replace with the actual track_id
-                                album_id: createdAlbum.id,
-                            },
-                        },
-                        create: {
-                            name: "track",
-                            image: "track-billede",
-                        },
-                    },
+                                track_id: 2,
+                                album_id: 2
+                            }
+                        }
+                    ]
                 },
             },
         });
 
-        return createdAlbum;
+        return album
 
 
 

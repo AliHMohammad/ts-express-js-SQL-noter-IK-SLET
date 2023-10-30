@@ -187,27 +187,7 @@ export default class AlbumController {
 
 
 
-    // const album = await prisma.albums.create({
-    //     data: {
-    //         title,
-    //         yearOfRelease,
-    //         image,
-    //         artists: {
-    //             connect: [{
-    //                 id: 1
-    //             }],
-    //         },
-    //         tracks: {
-    //             connect: [{
-    //                 album_id_track_id: {
-    //                     artist_id:
-    //                 }
-    //             }]
-    //         },
-    //     },
-    // });
-    //
-    // return album
+
 
 
 
