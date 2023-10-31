@@ -157,40 +157,23 @@ export default class AlbumRepository {
                 yearOfRelease,
                 image,
                 artists: {
-                    connect: [
-                        {
-                            artist_id_album_id: {
-                                artist_id: 4,
-                                album_id: 2
-                            }
+                    connect: artists.map((artist: Artist) => {
+                        return {
+                            id: artist.id
                         }
-                    ],
+                    }),
                 },
                 tracks: {
-                    connect: [
-                        {
-                            album_id_track_id: {
-                                track_id: 2,
-                                album_id: 2
-                            }
+                    connect: tracks.map((track: Track) => {
+                        return {
+                            id: track.id
                         }
-                    ]
+                    })
                 },
             },
         });
 
         return album
-
-
-
-
-
-
-
-
-
-
-
 
 
         // return prisma.albums.create({
