@@ -70,12 +70,15 @@ export default class AlbumRepository {
             const newTrack = tracksRepository.create(trackData);
             const savedTrack = await tracksRepository.save(newTrack);
             // 3.5 Create and save artists and associate it with their track
-            savedTrack.artists.map(async (artistData) => {
+            const savedTrackArtists = await Promise.all(savedTrack.artists.map(async (artistData) => {
                 const newArtist = artistsRepository.create(artistData);
-                const savedArtist = await artistsRepository.save(newArtist);
-                savedTrack.artists.push(savedArtist);
-            });
-            return savedTrack;
+                return await artistsRepository.save(newArtist);
+            }));
+            console.log(savedTrackArtists);
+            return {
+                ...savedTrack,
+                artists: savedTrackArtists
+            };
         }));
         // 4. Associate Artists and Tracks with the Album
         savedAlbum.artists = savedArtists;

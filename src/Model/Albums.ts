@@ -27,7 +27,7 @@ export class Albums {
     })
     image!: string | null;
 
-    @ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true, onDelete: "CASCADE" })
+    @ManyToMany(() => Tracks, (tracks) => tracks.albums, { cascade: true })
     @JoinTable({
         name: "albums_tracks",
         joinColumns: [{ name: "album_id", referencedColumnName: "id" }],

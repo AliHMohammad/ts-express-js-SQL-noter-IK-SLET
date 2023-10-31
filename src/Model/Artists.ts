@@ -19,7 +19,7 @@ export class Artists {
     })
     image!: string | null;
 
-    @ManyToMany(() => Albums, (albums) => albums.artists, { cascade: true, onDelete: "CASCADE" })
+    @ManyToMany(() => Albums, (albums) => albums.artists, { cascade: true })
     @JoinTable({
         name: "artists_albums",
         joinColumns: [{ name: "artist_id", referencedColumnName: "id" }],
@@ -28,7 +28,7 @@ export class Artists {
     })
     albums!: Albums[];
 
-    @ManyToMany(() => Tracks, (tracks) => tracks.artists, { cascade: true, onDelete: "CASCADE" })
+    @ManyToMany(() => Tracks, (tracks) => tracks.artists, { cascade: true})
     @JoinTable({
         name: "artists_tracks",
         joinColumns: [{ name: "artist_id", referencedColumnName: "id" }],
