@@ -15,7 +15,8 @@ export default class AlbumRepository {
                                 trackArtist: {
                                     include: {
                                         artist: true
-                                    }, orderBy: {
+                                    },
+                                    orderBy: {
                                         artist: {
                                             name: "asc"
                                         }
@@ -29,7 +30,7 @@ export default class AlbumRepository {
                         }
                     }
                 },
-                artistAlbum: {
+                albumArtist: {
                     include: {
                         artist: true
                     }, orderBy: {
@@ -48,35 +49,33 @@ export default class AlbumRepository {
             select: {
                 id: true,
                 title: true,
-                yearOfRelease: true,
                 image: true,
-                tracks: {
+                yearOfRelease: true,
+                albumArtist: {
                     include: {
-                        tracks: {
+                        artist: true
+                    },
+                    orderBy: {
+                        artist: {
+                            name: "asc"
+                        }
+                    }
+                },
+                albumTrack: {
+                    include: {
+                        track: {
                             include: {
-                                artists: {
+                                trackArtist: {
                                     include: {
-                                        artists: true
-                                    }, orderBy: {
-                                        artists: {
-                                            name: "asc"
-                                        }
+                                        artist: true
                                     }
                                 }
                             }
                         }
-                    }, orderBy: {
-                        tracks: {
+                    },
+                    orderBy: {
+                        track: {
                             title: "asc"
-                        }
-                    }
-                },
-                artists: {
-                    include: {
-                        artists: true
-                    }, orderBy: {
-                        artists: {
-                            name: "asc"
                         }
                     }
                 }
@@ -93,32 +92,30 @@ export default class AlbumRepository {
                 title: true,
                 yearOfRelease: true,
                 image: true,
-                tracks: {
+                albumTrack: {
                     include: {
-                        tracks: {
+                        track: {
                             include: {
-                                artists: {
+                                trackArtist: {
                                     include: {
-                                        artists: true
-                                    }, orderBy: {
-                                        artists: {
+                                        artist: true
+                                    },
+                                    orderBy: {
+                                        artist: {
                                             name: "asc"
                                         }
                                     }
                                 }
                             }
                         }
-                    }, orderBy: {
-                        tracks: {
-                            title: "asc"
-                        }
                     }
                 },
-                artists: {
+                albumArtist: {
                     include: {
-                        artists: true
-                    }, orderBy: {
-                        artists: {
+                        artist: true
+                    },
+                    orderBy: {
+                        artist: {
                             name: "asc"
                         }
                     }
@@ -140,54 +137,89 @@ export default class AlbumRepository {
         });
     }
     async createAlbum(title, yearOfRelease, image, artists, tracks) {
-        console.log(artists.map((artist) => ({ id: artist.id })));
-        console.log(tracks.map((track) => ({ id: track.id })));
         const album = await prisma.album.create({
             data: {
                 title,
                 yearOfRelease,
                 image,
-            },
+            }
         });
-        const artistArr = [];
-        for (const artist of artists) {
-            artistArr.push(await prisma.artist.create({
-                data: {
-                    id: artist.id,
-                    name: artist.name,
-                    image: artist.image
+        const result = await prisma.album.update({
+            where: {
+                id: album.id,
+            },
+            data: {
+                albumArtist: {
+                    connect: artists.map((artist) => ({
+                        artist_id_album_id: {
+                            artist_id: 5,
+                            album_id: album.id
+                        }
+                    }))
+                },
+                albumTrack: {
+                    connectOrCreate: tracks.map((track) => ({}))
                 }
-            }));
-        }
-        return album;
-        // return prisma.albums.create({
-        //     data: {
-        //         title,
-        //         yearOfRelease,
-        //         image,
-        //         artists: {
-        //             connectOrCreate: artists.map((artist: Artist) => ({
-        //                 where: {
-        //                     id: artist.id
-        //                 },
-        //                 create: {
-        //                     name: artist.name,
-        //                     image: artist.image
-        //                 }
-        //             }))
-        //         },
-        //         tracks: {
-        //             connectOrCreate: tracks.map((track: Track) => {
-        //                 return {
-        //                     where: {id: track.id},
-        //                     create: {
-        //                         name: track.title,
-        //                         image: track.duration
-        //                     }
-        //                 }
-        //             })
-        //         }
-        //     }
-        // })
+            }
+        });
+        return result;
+        /*artists.map(async (artist) => {
+            await prisma.artist_album.create({
+                data: {
+                    artist_id: artist.id,
+                    album_id: album.id
+                }
+            })
+        });
+
+
+        tracks.map(async (track) => {
+            await prisma.album_track.create({
+                data: {
+                    album_id: album.id,
+                    track_id: track.id
+                }
+            })
+        });
+
+        return prisma.album.findUniqueOrThrow({
+            where: {
+                id: album.id
+            },
+            select: {
+                id: true,
+                title: true,
+                image: true,
+                yearOfRelease: true,
+                albumArtist: {
+                    include: {
+                        artist: true
+                    },
+                    orderBy: {
+                        artist: {
+                            name: "asc"
+                        }
+                    }
+                },
+                albumTrack: {
+                    include: {
+                        track: {
+                            include: {
+                                trackArtist: {
+                                    include: {
+                                        artist: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    orderBy: {
+                        track: {
+                            title: "asc"
+                        }
+                    }
+                }
+            }
+        });*/
     }
 }

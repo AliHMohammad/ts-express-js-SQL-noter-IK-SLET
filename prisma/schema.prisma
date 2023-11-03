@@ -13,7 +13,7 @@ model album {
   yearOfRelease Int            @map(name: "year_of_release")
   image         String?        @default("anon-billed") @db.VarChar(1000)
   albumTrack    album_track[]
-  artistAlbum   artist_album[]
+  albumArtist   artist_album[]
 }
 
 model artist {

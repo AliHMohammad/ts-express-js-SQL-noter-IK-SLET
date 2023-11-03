@@ -16,16 +16,16 @@ export default class AlbumController {
                             id: item.track.id,
                             title: item.track.title,
                             duration: item.track.duration,
-                            artists: item.track.trackArtist.map((item) => {
+                            artists: item.track.trackArtist.map((trackArtistItem) => {
                                 return {
-                                    id: item.artist.id,
-                                    name: item.artist.name,
-                                    image: item.artist.image
+                                    id: trackArtistItem.artist.id,
+                                    name: trackArtistItem.artist.name,
+                                    image: trackArtistItem.artist.image
                                 };
                             })
                         };
                     }),
-                    artists: album.artistAlbum.map((item) => {
+                    artists: album.albumArtist.map((item) => {
                         return {
                             id: item.artist.id,
                             name: item.artist.name,
@@ -53,26 +53,29 @@ export default class AlbumController {
             const repository = new AlbumRepository();
             const album = await repository.getSingleAlbum(id);
             const result = {
-                ...album,
-                tracks: album.tracks.map((track) => {
+                id: album.id,
+                title: album.title,
+                image: album.image,
+                yearOfRelease: album.yearOfRelease,
+                artists: album.albumArtist.map((item) => {
                     return {
-                        id: track.tracks.id,
-                        title: track.tracks.title,
-                        duration: track.tracks.duration,
-                        artists: track.tracks.artists.map((artist) => {
-                            return {
-                                id: artist.artists.id,
-                                name: artist.artists.name,
-                                image: artist.artists.image
-                            };
-                        })
+                        id: item.artist.id,
+                        name: item.artist.name,
+                        image: item.artist.image
                     };
                 }),
-                artists: album.artists.map((artist) => {
+                tracks: album.albumTrack.map((item) => {
                     return {
-                        id: artist.artists.id,
-                        name: artist.artists.name,
-                        image: artist.artists.image
+                        id: item.track.id,
+                        title: item.track.title,
+                        duration: item.track.duration,
+                        artists: item.track.trackArtist.map((trackArtistItem) => {
+                            return {
+                                id: trackArtistItem.artist.id,
+                                name: trackArtistItem.artist.name,
+                                image: trackArtistItem.artist.image
+                            };
+                        })
                     };
                 })
             };
@@ -96,26 +99,29 @@ export default class AlbumController {
             const albums = await repository.searchAlbums(query);
             const result = albums.map((album) => {
                 return {
-                    ...album,
-                    tracks: album.tracks.map((track) => {
+                    id: album.id,
+                    title: album.title,
+                    yearOfRelease: album.yearOfRelease,
+                    image: album.image,
+                    tracks: album.albumTrack.map((item) => {
                         return {
-                            id: track.tracks.id,
-                            title: track.tracks.title,
-                            duration: track.tracks.duration,
-                            artists: track.tracks.artists.map((artist) => {
+                            id: item.track.id,
+                            title: item.track.title,
+                            duration: item.track.duration,
+                            artists: item.track.trackArtist.map((trackArtistItem) => {
                                 return {
-                                    id: artist.artists.id,
-                                    name: artist.artists.name,
-                                    image: artist.artists.image
+                                    id: trackArtistItem.artist.id,
+                                    name: trackArtistItem.artist.name,
+                                    image: trackArtistItem.artist.image
                                 };
                             })
                         };
                     }),
-                    artists: album.artists.map((artist) => {
+                    artists: album.albumArtist.map((item) => {
                         return {
-                            id: artist.artists.id,
-                            name: artist.artists.name,
-                            image: artist.artists.image
+                            id: item.artist.id,
+                            name: item.artist.name,
+                            image: item.artist.image
                         };
                     })
                 };

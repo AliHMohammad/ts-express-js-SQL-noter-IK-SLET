@@ -16,7 +16,7 @@ export default class ArtistRepository {
             include: {
                 artistTrack: {
                     include: {
-                        tracks: true
+                        track: true
                     }
                 }
             },

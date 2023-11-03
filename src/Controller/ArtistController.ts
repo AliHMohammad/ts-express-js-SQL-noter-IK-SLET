@@ -33,11 +33,11 @@ export default class ArtistController {
                 id: artist.id,
                 name: artist.name,
                 image: artist.image,
-                tracks: artist.artistTrack.map((track) => {
+                tracks: artist.artistTrack.map((item) => {
                     return {
-                        id: track.tracks.id,
-                        title: track.tracks.title,
-                        duration: track.tracks.duration
+                        id: item.track.id,
+                        title: item.track.title,
+                        duration: item.track.duration
                     }
                 })
             }
