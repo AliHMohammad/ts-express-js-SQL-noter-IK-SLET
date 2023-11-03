@@ -144,82 +144,43 @@ export default class AlbumRepository {
                 image,
             }
         });
-        const result = await prisma.album.update({
-            where: {
-                id: album.id,
-            },
-            data: {
-                albumArtist: {
-                    connect: artists.map((artist) => ({
-                        artist_id_album_id: {
-                            artist_id: 5,
-                            album_id: album.id
-                        }
-                    }))
-                },
-                albumTrack: {
-                    connectOrCreate: tracks.map((track) => ({}))
-                }
-            }
-        });
-        return result;
-        /*artists.map(async (artist) => {
+        artists.map(async (artist) => {
             await prisma.artist_album.create({
                 data: {
                     artist_id: artist.id,
                     album_id: album.id
                 }
-            })
+            });
         });
-
-
         tracks.map(async (track) => {
             await prisma.album_track.create({
                 data: {
                     album_id: album.id,
                     track_id: track.id
                 }
-            })
+            });
         });
-
-        return prisma.album.findUniqueOrThrow({
+        /*const result = await prisma.album.update({
             where: {
-                id: album.id
+                id: album.id,
             },
-            select: {
-                id: true,
-                title: true,
-                image: true,
-                yearOfRelease: true,
+            data: {
                 albumArtist: {
-                    include: {
-                        artist: true
-                    },
-                    orderBy: {
-                        artist: {
-                            name: "asc"
-                        }
-                    }
+                    connect: artists.map((artist: artist) => ({
+                        id: artist.id
+                    }))
                 },
                 albumTrack: {
-                    include: {
-                        track: {
-                            include: {
-                                trackArtist: {
-                                    include: {
-                                        artist: true
-                                    }
-                                }
-                            }
+                    connect: tracks.map((track: track) => ({
+                        album_id_track_id: {
+                            track_id: track.id,
+                            album_id: album.id
                         }
-                    },
-                    orderBy: {
-                        track: {
-                            title: "asc"
-                        }
-                    }
+                    }))
                 }
             }
-        });*/
+        })
+
+        return result*/
     }
 }
