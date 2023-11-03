@@ -154,6 +154,7 @@ export default class AlbumRepository {
             }
         })
 
+        //Create associations with artists
         artists.map(async (artist: artist) => {
             await prisma.artist_album.create({
                 data: {
@@ -163,6 +164,7 @@ export default class AlbumRepository {
             })
         });
 
+        //Create associations with tracks
         tracks.map(async (track: track) => {
             await prisma.album_track.create({
                 data: {
@@ -171,33 +173,11 @@ export default class AlbumRepository {
                 }
             })
         });
-
-        /*const result = await prisma.album.update({
-            where: {
-                id: album.id,
-            },
-            data: {
-                albumArtist: {
-                    connect: artists.map((artist: artist) => ({
-                        id: artist.id
-                    }))
-                },
-                albumTrack: {
-                    connect: tracks.map((track: track) => ({
-                        album_id_track_id: {
-                            track_id: track.id,
-                            album_id: album.id
-                        }
-                    }))
-                }
-            }
-        })
-
-        return result*/
     }
 
     public async updateAlbum(id: number, title: string, yearOfRelease: number, image: string, artists: artist[], tracks: track[]){
 
+        //Update the album itself
         await prisma.album.update({
             data: {
                 title,
@@ -208,5 +188,37 @@ export default class AlbumRepository {
                 id
             }
         })
+
+        //Remove all associations with artists
+        await prisma.artist_album.deleteMany({
+            where: {album_id: id}
+        })
+
+        //Remove all associations with tracks
+        await prisma.album_track.deleteMany({
+            where: {album_id: id}
+        })
+
+        //Create new associations with artists
+        for (const artist of artists){
+            await prisma.artist_album.create({
+                data: {
+                    artist_id: artist.id,
+                    album_id: id
+                }
+            })
+        }
+
+        //Create new associations with tracks
+        for (const track of tracks) {
+            await prisma.album_track.create({
+                data: {
+                    album_id: id,
+                    track_id: track.id
+                }
+            })
+        }
+
+        return this.getSingleAlbum(id);
     }
 }

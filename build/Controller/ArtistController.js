@@ -1,7 +1,7 @@
 import ArtistRepository from "../Repository/ArtistRepository.js";
 export default class ArtistController {
     constructor() { }
-    async getAllArtistsExecutor(request, response) {
+    async getAllArtistsExecutor(_request, response) {
         try {
             const repository = new ArtistRepository();
             const artists = await repository.getAllArtists();

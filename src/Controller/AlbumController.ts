@@ -8,7 +8,7 @@ import {Artist, Track} from "../Types/global";
 export default class AlbumController {
     constructor() {}
 
-    public async getAllAlbumsExecutor(request: Request<{},{},{},{}>, response: Response) {
+    public async getAllAlbumsExecutor(_request: Request<{},{},{},{}>, response: Response) {
         try {
             const repository = new AlbumRepository();
             const albums = await repository.getAllAlbums();
@@ -196,7 +196,35 @@ export default class AlbumController {
             if (!title || !image || !yearOfRelease || !artists || !tracks) throw new Error("Missing parameters");
 
             const repository = new AlbumRepository();
-            const result = await repository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+            const album = await repository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+
+            const result = {
+                id: album.id,
+                title: album.title,
+                image: album.image,
+                yearOfRelease: album.yearOfRelease,
+                artists: album.albumArtist.map((item) => {
+                    return {
+                        id: item.artist.id,
+                        name: item.artist.name,
+                        image: item.artist.image
+                    }
+                }),
+                tracks: album.albumTrack.map((item) => {
+                    return {
+                        id: item.track.id,
+                        title: item.track.title,
+                        duration: item.track.duration,
+                        artists: item.track.trackArtist.map((trackArtistItem) => {
+                            return {
+                                id: trackArtistItem.artist.id,
+                                name: trackArtistItem.artist.name,
+                                image: trackArtistItem.artist.image
+                            }
+                        })
+                    }
+                })
+            }
 
             response.status(201).json(result);
         } catch (error: any) {
