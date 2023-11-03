@@ -13,7 +13,7 @@ albumRouter.delete("/albums/:albumId", albumController.deleteAlbumExecutor);
 
 albumRouter.post("/albums", albumController.createAlbumExecutor)
 
-albumRouter.put("/albums/:albumId", updateAlbum);
+albumRouter.put("/albums/:albumId", albumController.updateAlbumExecutor);
 
 albumRouter.get("/search/albums", albumController.searchAlbumsExecutor);
 

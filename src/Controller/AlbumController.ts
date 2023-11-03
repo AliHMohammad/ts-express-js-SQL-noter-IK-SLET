@@ -188,11 +188,26 @@ export default class AlbumController {
         }
     }
 
-    public async updateAlbumExecutor(request: Request<{albumId: number},{},{title: string, image: string, yearOfRelease: number, artists: Artist[], tracks: Track[]},{}>, response: Response){
-        
+    public async updateAlbumExecutor(request: Request<{albumId: string},{},{title: string, image: string, yearOfRelease: number, artists: Artist[], tracks: Track[]},{}>, response: Response){
+        const {title, image, yearOfRelease, artists, tracks} = request.body;
+        const id = parseInt(request.params.albumId);
+
+        try {
+            if (!title || !image || !yearOfRelease || !artists || !tracks) throw new Error("Missing parameters");
+
+            const repository = new AlbumRepository();
+            const result = await repository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+
+            response.status(201).json(result);
+        } catch (error: any) {
+            console.log(error)
+            if (error instanceof Error){
+                response.status(404).json({error: error.message});
+            } else {
+                response.status(500).json({error: error.message});
+            }
+        }
     }
-
-
 }
 
 
