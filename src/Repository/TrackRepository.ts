@@ -71,14 +71,17 @@ export default class TrackRepository {
         newTrack.title = title;
         newTrack.duration = duration;
 
+        //Update the track itself
         const updateResult = await this.repository.createQueryBuilder("track")
             .update()
             .set(newTrack)
             .where("id = :id", {id})
             .execute();
 
+        //If updateResult.affected is 0, throw error
         if (!updateResult.affected) throw new Error("Could not update track with specified ID");
 
+        //Get the newly updated track
         const updatedTrack = await this.repository.findOneOrFail({
             where: {
                 id
@@ -86,10 +89,12 @@ export default class TrackRepository {
         });
 
 
-        // If artists and/or albums is given, then create associations to them. Save again.
-        artists ? updatedTrack.artists = artists : null;
-        albums ? updatedTrack.albums = albums : null;
+        // If artists and/or albums is given, then create associations to them.
+        if (artists) updatedTrack.artists = artists;
+        if (albums) updatedTrack.albums = albums;
 
+
+        //Save the updated track and return it
         return await this.repository.save(updatedTrack);
     }
 
