@@ -195,4 +195,18 @@ export default class AlbumRepository {
 
         return result*/
     }
+
+    public async updateAlbum(id: number, title: string, yearOfRelease: number, image: string, artists: artist[], tracks: track[]){
+
+        await prisma.album.update({
+            data: {
+                title,
+                yearOfRelease,
+                image
+            },
+            where: {
+                id
+            }
+        })
+    }
 }

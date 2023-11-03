@@ -186,8 +186,10 @@ export default class AlbumController {
                 response.status(500).json({error: error.message});
             }
         }
+    }
 
-
+    public async updateAlbumExecutor(request: Request<{albumId: number},{},{title: string, image: string, yearOfRelease: number, artists: Artist[], tracks: Track[]},{}>, response: Response){
+        
     }
 
 
