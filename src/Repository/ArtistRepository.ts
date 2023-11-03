@@ -4,7 +4,7 @@ export default class ArtistRepository {
     constructor() {}
 
     public async getAllArtists() {
-        return prisma.artists.findMany({
+        return prisma.artist.findMany({
             orderBy: {
                 name: "asc"
             }
@@ -12,9 +12,9 @@ export default class ArtistRepository {
     }
 
     public async getSingleArtist(id: number) {
-        return prisma.artists.findFirstOrThrow({
+        return prisma.artist.findFirstOrThrow({
             include: {
-                tracks: {
+                artistTrack: {
                     include: {
                         tracks: true
                     }
@@ -27,7 +27,7 @@ export default class ArtistRepository {
     }
 
     public async searchArtists(query: string) {
-        return prisma.artists.findMany({
+        return prisma.artist.findMany({
             where: {
                 name: {contains: query}
             },
@@ -38,7 +38,7 @@ export default class ArtistRepository {
     }
 
     public async deleteArtist(id: number){
-        await prisma.artists.delete({
+        await prisma.artist.delete({
             where: {
                 id
             }
@@ -46,7 +46,7 @@ export default class ArtistRepository {
     }
 
     public async createArtist(name: string, image: string) {
-        return prisma.artists.create({
+        return prisma.artist.create({
             data: {
                 name,
                 image
@@ -55,7 +55,7 @@ export default class ArtistRepository {
     }
 
     public async updateArtist(id: number, name: string, image: string) {
-        return prisma.artists.update({
+        return prisma.artist.update({
             data: {
                 name,
                 image

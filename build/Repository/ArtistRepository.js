@@ -2,16 +2,16 @@ import prisma from "../Database/data-source.js";
 export default class ArtistRepository {
     constructor() { }
     async getAllArtists() {
-        return prisma.artists.findMany({
+        return prisma.artist.findMany({
             orderBy: {
                 name: "asc"
             }
         });
     }
     async getSingleArtist(id) {
-        return prisma.artists.findFirstOrThrow({
+        return prisma.artist.findFirstOrThrow({
             include: {
-                tracks: {
+                artistTrack: {
                     include: {
                         tracks: true
                     }
@@ -23,7 +23,7 @@ export default class ArtistRepository {
         });
     }
     async searchArtists(query) {
-        return prisma.artists.findMany({
+        return prisma.artist.findMany({
             where: {
                 name: { contains: query }
             },
@@ -33,14 +33,14 @@ export default class ArtistRepository {
         });
     }
     async deleteArtist(id) {
-        await prisma.artists.delete({
+        await prisma.artist.delete({
             where: {
                 id
             }
         });
     }
     async createArtist(name, image) {
-        return prisma.artists.create({
+        return prisma.artist.create({
             data: {
                 name,
                 image
@@ -48,7 +48,7 @@ export default class ArtistRepository {
         });
     }
     async updateArtist(id, name, image) {
-        return prisma.artists.update({
+        return prisma.artist.update({
             data: {
                 name,
                 image

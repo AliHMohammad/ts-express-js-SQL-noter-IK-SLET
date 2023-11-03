@@ -30,8 +30,10 @@ export default class ArtistController {
             const artist = await repository.getSingleArtist(id);
 
             const result = {
-                ...artist,
-                tracks: artist.tracks.map((track) => {
+                id: artist.id,
+                name: artist.name,
+                image: artist.image,
+                tracks: artist.artistTrack.map((track) => {
                     return {
                         id: track.tracks.id,
                         title: track.tracks.title,

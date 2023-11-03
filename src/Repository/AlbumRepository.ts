@@ -5,21 +5,21 @@ export default class AlbumRepository {
     constructor() {}
 
     public async getAllAlbums() {
-        return prisma.albums.findMany({
+        return prisma.album.findMany({
             select: {
                 id: true,
                 title: true,
                 yearOfRelease: true,
                 image: true,
-                tracks:{
+                albumTrack:{
                     include: {
-                        tracks: {
+                        track: {
                             include: {
-                                artists: {
+                                trackArtist: {
                                     include: {
-                                        artists: true
+                                        artist: true
                                     }, orderBy: {
-                                        artists: {
+                                        artist: {
                                             name: "asc"
                                         }
                                     }
@@ -27,16 +27,16 @@ export default class AlbumRepository {
                             }
                         }
                     }, orderBy: {
-                        tracks: {
+                        track: {
                             title: "asc"
                         }
                     }
                 },
-                artists: {
+                artistAlbum: {
                     include: {
-                        artists: true
+                        artist: true
                     }, orderBy: {
-                        artists: {
+                        artist: {
                             name: "asc"
                         }
                     }
@@ -48,7 +48,7 @@ export default class AlbumRepository {
     }
 
     public async getSingleAlbum(id: number) {
-        return prisma.albums.findFirstOrThrow({
+        return prisma.album.findFirstOrThrow({
             select: {
                 id: true,
                 title: true,
@@ -92,7 +92,7 @@ export default class AlbumRepository {
     }
 
     public async searchAlbums(query: string) {
-        return prisma.albums.findMany({
+        return prisma.album.findMany({
             select: {
                 id: true,
                 title: true,
@@ -139,39 +139,38 @@ export default class AlbumRepository {
     }
 
     public async deleteAlbum(id: number) {
-        await prisma.albums.delete({
+        await prisma.album.delete({
             where: {
                 id
             }
         })
     }
 
-    public async createAlbum(title: string, yearOfRelease: number, image: string, artists: any, tracks: any) {
+    public async createAlbum(title: string, yearOfRelease: number, image: string, artists: Artist[], tracks: Track[]) {
         console.log(artists.map((artist: Artist) => ({ id: artist.id })))
         console.log(tracks.map((track: Track) => ({ id: track.id })))
 
 
-        const album = await prisma.albums.create({
+        const album = await prisma.album.create({
             data: {
                 title,
                 yearOfRelease,
                 image,
-                artists: {
-                    connect: artists.map((artist: Artist) => {
-                        return {
-                            id: artist.id
-                        }
-                    }),
-                },
-                tracks: {
-                    connect: tracks.map((track: Track) => {
-                        return {
-                            id: track.id
-                        }
-                    })
-                },
             },
         });
+
+        const artistArr = []
+        for (const artist of artists) {
+            artistArr.push(await prisma.artist.create({
+                data: {
+                    id: artist.id,
+                    name: artist.name,
+                    image: artist.image
+                }
+            }));
+        }
+
+
 
         return album
 

@@ -7,26 +7,29 @@ export default class AlbumController {
             const albums = await repository.getAllAlbums();
             const result = albums.map((album) => {
                 return {
-                    ...album,
-                    tracks: album.tracks.map((track) => {
+                    id: album.id,
+                    title: album.title,
+                    yearOfRelease: album.yearOfRelease,
+                    image: album.image,
+                    tracks: album.albumTrack.map((item) => {
                         return {
-                            id: track.tracks.id,
-                            title: track.tracks.title,
-                            duration: track.tracks.duration,
-                            artists: track.tracks.artists.map((artist) => {
+                            id: item.track.id,
+                            title: item.track.title,
+                            duration: item.track.duration,
+                            artists: item.track.trackArtist.map((item) => {
                                 return {
-                                    id: artist.artists.id,
-                                    name: artist.artists.name,
-                                    image: artist.artists.image
+                                    id: item.artist.id,
+                                    name: item.artist.name,
+                                    image: item.artist.image
                                 };
                             })
                         };
                     }),
-                    artists: album.artists.map((artist) => {
+                    artists: album.artistAlbum.map((item) => {
                         return {
-                            id: artist.artists.id,
-                            name: artist.artists.name,
-                            image: artist.artists.image
+                            id: item.artist.id,
+                            name: item.artist.name,
+                            image: item.artist.image
                         };
                     })
                 };
