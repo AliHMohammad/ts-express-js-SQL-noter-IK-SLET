@@ -103,6 +103,8 @@ export default class TrackRepository {
         const newTrack = new Tracks();
         newTrack.title = title;
         newTrack.duration = duration;
+
+        //If artists/albums is given as argument, assign it. Else, assign empty array
         newTrack.artists = artists || [];
         newTrack.albums = albums || [];
 
