@@ -1,11 +1,7 @@
-import {album, artist} from "@prisma/client";
 import prisma from "../Database/data-source.js";
-
-
 export default class TrackRepository {
-    constructor() {}
-
-    public async getAllTracks() {
+    constructor() { }
+    async getAllTracks() {
         return prisma.track.findMany({
             select: {
                 id: true,
@@ -35,10 +31,9 @@ export default class TrackRepository {
             orderBy: {
                 title: "asc"
             }
-        })
+        });
     }
-
-    public async getSingleTrack(id: number) {
+    async getSingleTrack(id) {
         return prisma.track.findUniqueOrThrow({
             select: {
                 id: true,
@@ -68,10 +63,9 @@ export default class TrackRepository {
             where: {
                 id
             }
-        })
+        });
     }
-
-    public async searchTracks(query: string) {
+    async searchTracks(query) {
         return prisma.track.findMany({
             select: {
                 id: true,
@@ -99,46 +93,40 @@ export default class TrackRepository {
                 }
             },
             where: {
-              title: {
-                  contains: query
-              }
+                title: {
+                    contains: query
+                }
             },
             orderBy: {
                 title: "asc"
             }
-        })
+        });
     }
-
-    public async createTrack(title: string, duration: number, artists: artist[], albums: album[]){
-
-        const {id} = await prisma.track.create({
+    async createTrack(title, duration, artists, albums) {
+        const { id } = await prisma.track.create({
             data: {
                 title,
                 duration
             }
-        })
-
+        });
         for (const artist of artists) {
             await prisma.artist_track.create({
                 data: {
                     track_id: id,
                     artist_id: artist.id
                 }
-            })
+            });
         }
-
         for (const album of albums) {
             await prisma.album_track.create({
                 data: {
                     track_id: id,
                     album_id: album.id
                 }
-            })
+            });
         }
     }
-
-    public async updateTrack(id: number, title: string, duration: number, artists: artist[], albums: album[]){
-
+    async updateTrack(id, title, duration, artists, albums) {
         await prisma.track.update({
             data: {
                 title,
@@ -147,47 +135,40 @@ export default class TrackRepository {
             where: {
                 id
             }
-        })
-
+        });
         await prisma.album_track.deleteMany({
             where: {
                 track_id: id
             }
-        })
-
+        });
         await prisma.artist_track.deleteMany({
             where: {
                 track_id: id
             }
-        })
-
+        });
         for (const artist of artists) {
             await prisma.artist_track.create({
                 data: {
                     track_id: id,
                     artist_id: artist.id
                 }
-            })
+            });
         }
-
         for (const album of albums) {
             await prisma.album_track.create({
                 data: {
                     track_id: id,
                     album_id: album.id
                 }
-            })
+            });
         }
-
         return this.getSingleTrack(id);
     }
-
-    public async deleteTrack(id: number){
+    async deleteTrack(id) {
         return prisma.track.delete({
             where: {
                 id
             }
-        })
+        });
     }
-
 }
