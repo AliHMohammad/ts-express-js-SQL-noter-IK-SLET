@@ -111,7 +111,7 @@ export default class TrackRepository {
 
     public async createTrack(title: string, duration: number, artists: artist[], albums: album[]){
 
-        const {id} = await prisma.track.create({
+        const track = await prisma.track.create({
             data: {
                 title,
                 duration
@@ -121,7 +121,7 @@ export default class TrackRepository {
         for (const artist of artists) {
             await prisma.artist_track.create({
                 data: {
-                    track_id: id,
+                    track_id: track.id,
                     artist_id: artist.id
                 }
             })
@@ -130,11 +130,13 @@ export default class TrackRepository {
         for (const album of albums) {
             await prisma.album_track.create({
                 data: {
-                    track_id: id,
-                    album_id: album.id
-                }
-            })
+                    track_id: track.id,
+                    album_id: album.id,
+                },
+            });
         }
+
+        return track;
     }
 
     public async updateTrack(id: number, title: string, duration: number, artists: artist[], albums: album[]){
@@ -178,8 +180,6 @@ export default class TrackRepository {
                 }
             })
         }
-
-        return this.getSingleTrack(id);
     }
 
     public async deleteTrack(id: number){

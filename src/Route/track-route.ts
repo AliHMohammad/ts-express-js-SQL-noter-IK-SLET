@@ -1,5 +1,4 @@
 import express from "express"
-import { getSingleTrack, getAllTracks, createTrack, deleteTrack, searchTracks, updateTrack } from "../Controller/track-controller.js";
 import TrackController from "../Controller/TrackController.js";
 
 const trackController = new TrackController();

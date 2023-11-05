@@ -1,11 +1,12 @@
 import express from "express";
-import { searchAll } from "../Controller/other-controller.js";
+import OtherController from "../Controller/OtherController.js";
 
 
+const otherController = new OtherController()
 const otherRouter = express.Router();
 
 
-otherRouter.get("/search", searchAll)
+otherRouter.get("/search", otherController.searchAllExecutor)
 
 
 export {otherRouter}

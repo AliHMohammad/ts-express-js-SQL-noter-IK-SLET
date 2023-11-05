@@ -14,7 +14,7 @@ export default class TrackController {
                         return {
                             id: item.artist.id,
                             name: item.artist.name,
-                            image: item.artist.image
+                            image: item.artist.image,
                         };
                     }),
                     albums: track.trackAlbum.map((item) => {
@@ -22,9 +22,9 @@ export default class TrackController {
                             id: item.album.id,
                             title: item.album.title,
                             yearOfRelease: item.album.yearOfRelease,
-                            image: item.album.image
+                            image: item.album.image,
                         };
-                    })
+                    }),
                 };
             });
             response.status(200).json(result);
@@ -53,7 +53,7 @@ export default class TrackController {
                     return {
                         id: item.artist.id,
                         name: item.artist.name,
-                        image: item.artist.image
+                        image: item.artist.image,
                     };
                 }),
                 albums: track.trackAlbum.map((item) => {
@@ -61,11 +61,11 @@ export default class TrackController {
                         id: item.album.id,
                         title: item.album.title,
                         yearOfRelease: item.album.yearOfRelease,
-                        image: item.album.image
+                        image: item.album.image,
                     };
-                })
+                }),
             };
-            response.status(200).json(track);
+            response.status(200).json(result);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -77,11 +77,100 @@ export default class TrackController {
         }
     }
     async searchTracksExecutor(request, response) {
+        const query = request.query.q;
+        try {
+            if (!query)
+                throw new Error("Query is missing");
+            const repository = new TrackRepository();
+            const tracks = await repository.searchTracks(query);
+            const result = tracks.map((track) => {
+                return {
+                    id: track.id,
+                    title: track.title,
+                    duration: track.duration,
+                    artists: track.trackArtist.map((item) => {
+                        return {
+                            id: item.artist.id,
+                            name: item.artist.name,
+                            image: item.artist.image,
+                        };
+                    }),
+                    albums: track.trackAlbum.map((item) => {
+                        return {
+                            id: item.album.id,
+                            title: item.album.title,
+                            yearOfRelease: item.album.yearOfRelease,
+                            image: item.album.image,
+                        };
+                    }),
+                };
+            });
+            response.status(201).json(result);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            }
+            else {
+                response.status(500).json({ error: error.message });
+            }
+        }
     }
     async createTrackExecutor(request, response) {
+        const { title, duration, artists, albums } = request.body;
+        try {
+            if (!title || !duration || !artists || !albums)
+                throw new Error("Parameters missing");
+            const repository = new TrackRepository();
+            const createdTrack = await repository.createTrack(title, duration, artists, albums);
+            response.status(201).json(createdTrack);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            }
+            else {
+                response.status(500).json({ error: error.message });
+            }
+        }
     }
     async updateTrackExecutor(request, response) {
+        const { title, duration, artists, albums } = request.body;
+        const id = parseInt(request.params.trackId);
+        try {
+            if (!title || !duration || !artists || !albums)
+                throw new Error("Parameters missing");
+            if (!id)
+                throw new Error("Id is not a number");
+            const repository = new TrackRepository();
+            await repository.updateTrack(id, title, duration, artists, albums);
+            response.status(204).json();
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            }
+            else {
+                response.status(500).json({ error: error.message });
+            }
+        }
     }
     async deleteTrackExecutor(request, response) {
+        const id = parseInt(request.params.trackId);
+        try {
+            if (!id)
+                throw new Error("Id is not a number");
+            const repository = new TrackRepository();
+            await repository.deleteTrack(id);
+            response.status(204).json();
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            }
+            else {
+                response.status(500).json({ error: error.message });
+            }
+        }
     }
 }
