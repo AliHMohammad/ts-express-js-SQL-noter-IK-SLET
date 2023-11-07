@@ -1,10 +1,19 @@
 import TrackRepository from "../Repository/TrackRepository.js";
 export default class TrackController {
     constructor() { }
-    async getAllTracksExecutor(_request, response) {
+    async getAllTracksExecutor(request, response) {
+        const pageNum = parseInt(request.query.pageNum);
+        const pageSize = parseInt(request.query.pageSize);
         try {
             const repository = new TrackRepository();
-            const tracks = await repository.getAllTracks();
+            let tracks;
+            if (pageNum && pageSize) {
+                const offset = (pageNum - 1) * pageSize;
+                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
+            }
+            else {
+                tracks = await repository.getAllTracks();
+            }
             const result = tracks.map((track) => {
                 return {
                     id: track.id,
@@ -181,7 +190,7 @@ export default class TrackController {
             let tracks;
             if (pageNum && pageSize) {
                 const offset = (pageNum - 1) * pageSize;
-                tracks = await repository.getPageTrack(pageSize, offset);
+                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
             }
             else {
                 tracks = await repository.getAllTracks();

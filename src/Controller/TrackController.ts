@@ -6,10 +6,19 @@ import { it } from "node:test";
 export default class TrackController {
     constructor() {}
 
-    public async getAllTracksExecutor(_request: Request<{}, {}, {}, {}>, response: Response) {
+    public async getAllTracksExecutor(request: Request<{}, {}, {}, {pageNum: string, pageSize: string}>, response: Response) {
+        const pageNum = parseInt(request.query.pageNum);
+        const pageSize = parseInt(request.query.pageSize);
+
         try {
             const repository = new TrackRepository();
-            const tracks = await repository.getAllTracks();
+            let tracks;
+            if (pageNum && pageSize) {
+                const offset = (pageNum - 1) * pageSize;
+                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
+            } else {
+                tracks = await repository.getAllTracks();
+            }
 
             const result = tracks.map((track) => {
                 return {
@@ -194,7 +203,7 @@ export default class TrackController {
             let tracks;
             if (pageNum && pageSize) {
                 const offset = (pageNum - 1) * pageSize;
-                tracks = await repository.getPageTrack(pageSize, offset);
+                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
             } else {
                 tracks = await repository.getAllTracks();
             }

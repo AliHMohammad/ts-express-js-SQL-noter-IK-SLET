@@ -190,10 +190,38 @@ export default class TrackRepository {
         })
     }
 
-    public async getPageTrack(pageSize: number, offsetValue: number) {
+    public async getTracksOnSpecificPage(pageSize: number, offsetValue: number) {
         return prisma.track.findMany({
+            select: {
+                id: true,
+                title: true,
+                duration: true,
+                trackArtist: {
+                    include: {
+                        artist: true
+                    },
+                    orderBy: {
+                        artist: {
+                            name: "asc"
+                        }
+                    }
+                },
+                trackAlbum: {
+                    include: {
+                        album: true
+                    },
+                    orderBy: {
+                        album: {
+                            title: "asc"
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                title: "asc"
+            },
             skip: offsetValue,
-            take: pageSize,
+            take: pageSize
         })
     }
 

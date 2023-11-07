@@ -171,10 +171,38 @@ export default class TrackRepository {
             }
         });
     }
-    async getPageTrack(pageSize, offsetValue) {
+    async getTracksOnSpecificPage(pageSize, offsetValue) {
         return prisma.track.findMany({
+            select: {
+                id: true,
+                title: true,
+                duration: true,
+                trackArtist: {
+                    include: {
+                        artist: true
+                    },
+                    orderBy: {
+                        artist: {
+                            name: "asc"
+                        }
+                    }
+                },
+                trackAlbum: {
+                    include: {
+                        album: true
+                    },
+                    orderBy: {
+                        album: {
+                            title: "asc"
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                title: "asc"
+            },
             skip: offsetValue,
-            take: pageSize,
+            take: pageSize
         });
     }
 }
