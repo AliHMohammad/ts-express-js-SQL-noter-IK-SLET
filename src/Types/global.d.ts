@@ -13,3 +13,15 @@ type Track = {
     duration: number
     artists: artist[]
 }
+
+type MetaData = {
+    totalCount?: number,
+    limit?: number,
+    offset?: number
+}
+
+type ResponseT = {
+    metaData?: MetaData;
+    data?: any;
+}
+

@@ -6,7 +6,7 @@ export default class TrackRepository {
             [sort]: direction.toLowerCase()
         };
         console.log(orderBy);
-        return prisma.track.findMany({
+        const tracks = await prisma.track.findMany({
             select: {
                 id: true,
                 title: true,
@@ -34,6 +34,9 @@ export default class TrackRepository {
             },
             orderBy: orderBy
         });
+        return {
+            data: tracks
+        };
     }
     async getSingleTrack(id) {
         return prisma.track.findUniqueOrThrow({
@@ -177,36 +180,43 @@ export default class TrackRepository {
         const orderBy = {
             [sort]: direction.toLowerCase()
         };
-        console.log(orderBy);
-        return prisma.track.findMany({
-            select: {
-                id: true,
-                title: true,
-                duration: true,
-                trackArtist: {
-                    include: {
-                        artist: true
+        const transactionResult = await prisma.$transaction(async (prisma) => {
+            const tracks = await prisma.track.findMany({
+                select: {
+                    id: true,
+                    title: true,
+                    duration: true,
+                    trackArtist: {
+                        include: {
+                            artist: true
+                        },
+                        orderBy: {
+                            artist: {
+                                name: "asc"
+                            }
+                        }
                     },
-                    orderBy: {
-                        artist: {
-                            name: "asc"
+                    trackAlbum: {
+                        include: {
+                            album: true
+                        },
+                        orderBy: {
+                            album: {
+                                title: "asc"
+                            }
                         }
                     }
                 },
-                trackAlbum: {
-                    include: {
-                        album: true
-                    },
-                    orderBy: {
-                        album: {
-                            title: "asc"
-                        }
-                    }
-                }
-            },
-            orderBy: orderBy,
-            skip: offsetValue,
-            take: pageSize
+                orderBy: orderBy,
+                skip: offsetValue,
+                take: pageSize,
+            });
+            const count = await prisma.track.count();
+            return {
+                data: tracks,
+                totalCount: count
+            };
         });
+        return transactionResult;
     }
 }

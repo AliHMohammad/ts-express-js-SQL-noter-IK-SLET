@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { album, artist } from "@prisma/client";
 import TrackRepository from "../Repository/TrackRepository.js";
 import { it } from "node:test";
+import {ResponseT} from "../Types/global";
+
 
 export default class TrackController {
     constructor() {}
@@ -13,18 +15,23 @@ export default class TrackController {
 
         try {
             if (!sort || !direction) throw new Error("Missing sort and/or direction queries");
-
             const repository = new TrackRepository();
             let tracks;
+            let result: ResponseT = {};
 
             if (pageNum && pageSize) {
                 const offset = (pageNum - 1) * pageSize;
                 tracks = await repository.getTracksOnSpecificPage(sort, direction, pageSize, offset);
+                result.metaData = {
+                    offset: offset,
+                    limit: pageSize,
+                    totalCount: tracks.totalCount
+                }
             } else {
                 tracks = await repository.getAllTracks(sort, direction);
             }
 
-            const result = tracks.map((track) => {
+            const responseData = tracks.data.map((track) => {
                 return {
                     id: track.id,
                     title: track.title,
@@ -45,8 +52,8 @@ export default class TrackController {
                         };
                     }),
                 };
-            });
-
+            })
+            result.data = responseData;
             response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
