@@ -48,7 +48,7 @@ export default class TrackController {
         const id = parseInt(request.params.trackId);
 
         try {
-            if (!id) throw new Error("Id is not a number");
+            if (!id) throw new Error("Id is not a number at singleTrackExecutor");
 
             const repository = new TrackRepository();
             const track = await repository.getSingleTrack(id);
@@ -151,7 +151,7 @@ export default class TrackController {
         
         try {
             if (!title || !duration || !artists || !albums) throw new Error("Parameters missing");
-            if (!id) throw new Error("Id is not a number");
+            if (!id) throw new Error("Id is not a number at UpdateTrack");
 
             const repository = new TrackRepository();
             await repository.updateTrack(id, title, duration, artists, albums);
@@ -170,12 +170,44 @@ export default class TrackController {
         const id = parseInt(request.params.trackId);
 
         try {
-            if (!id) throw new Error("Id is not a number");
+            if (!id) throw new Error("Id is not a number at DeleteTrack");
 
             const repository = new TrackRepository();
             await repository.deleteTrack(id);
 
             response.status(204).json()
+        } catch (error: any) {
+            if (error instanceof Error) {
+                response.status(404).json({ error: error.message });
+            } else {
+                response.status(500).json({ error: error.message });
+            }
+        }
+    }
+
+    public async getPageTrackExecutor(request: Request<{},{},{},{pageNum: string, pageSize: string}>, response: Response) {
+            const pageNum = parseInt(request.query.pageNum);
+            const pageSize = parseInt(request.query.pageSize);
+
+        try {
+            const repository = new TrackRepository();
+            let tracks;
+            if (pageNum && pageSize) {
+                const offset = (pageNum - 1) * pageSize;
+                tracks = await repository.getPageTrack(pageSize, offset);
+            } else {
+                tracks = await repository.getAllTracks();
+            }
+
+            const result = tracks.map((track) => {
+                return {
+                    id: track.id,
+                    title: track.title,
+                    duration: track.duration,
+                };
+            });
+
+            response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ error: error.message });

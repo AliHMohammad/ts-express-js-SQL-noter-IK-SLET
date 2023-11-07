@@ -171,4 +171,10 @@ export default class TrackRepository {
             }
         });
     }
+    async getPageTrack(pageSize, offsetValue) {
+        return prisma.track.findMany({
+            skip: offsetValue,
+            take: pageSize,
+        });
+    }
 }

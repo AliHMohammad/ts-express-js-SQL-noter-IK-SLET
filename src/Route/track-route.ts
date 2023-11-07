@@ -16,5 +16,7 @@ trackRouter.put("/tracks/:trackId", trackController.updateTrackExecutor);
 
 trackRouter.get("/search/tracks", trackController.searchTracksExecutor);
 
+trackRouter.get("/trackTest", trackController.getPageTrackExecutor)
+
 
 export { trackRouter };

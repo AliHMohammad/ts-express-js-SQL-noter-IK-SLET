@@ -190,4 +190,11 @@ export default class TrackRepository {
         })
     }
 
+    public async getPageTrack(pageSize: number, offsetValue: number) {
+        return prisma.track.findMany({
+            skip: offsetValue,
+            take: pageSize,
+        })
+    }
+
 }
