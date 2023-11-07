@@ -6,18 +6,22 @@ import { it } from "node:test";
 export default class TrackController {
     constructor() {}
 
-    public async getAllTracksExecutor(request: Request<{}, {}, {}, {pageNum: string, pageSize: string}>, response: Response) {
+    public async getAllTracksExecutor(request: Request<{}, {}, {}, {pageNum: string, pageSize: string, sort: string, direction: string}>, response: Response) {
         const pageNum = parseInt(request.query.pageNum);
         const pageSize = parseInt(request.query.pageSize);
+        const {sort, direction} = request.query;
 
         try {
+            if (!sort || !direction) throw new Error("Missing sort and/or direction queries");
+
             const repository = new TrackRepository();
             let tracks;
+
             if (pageNum && pageSize) {
                 const offset = (pageNum - 1) * pageSize;
-                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
+                tracks = await repository.getTracksOnSpecificPage(sort, direction, pageSize, offset);
             } else {
-                tracks = await repository.getAllTracks();
+                tracks = await repository.getAllTracks(sort, direction);
             }
 
             const result = tracks.map((track) => {
@@ -185,38 +189,6 @@ export default class TrackController {
             await repository.deleteTrack(id);
 
             response.status(204).json()
-        } catch (error: any) {
-            if (error instanceof Error) {
-                response.status(404).json({ error: error.message });
-            } else {
-                response.status(500).json({ error: error.message });
-            }
-        }
-    }
-
-    public async getPageTrackExecutor(request: Request<{},{},{},{pageNum: string, pageSize: string}>, response: Response) {
-            const pageNum = parseInt(request.query.pageNum);
-            const pageSize = parseInt(request.query.pageSize);
-
-        try {
-            const repository = new TrackRepository();
-            let tracks;
-            if (pageNum && pageSize) {
-                const offset = (pageNum - 1) * pageSize;
-                tracks = await repository.getTracksOnSpecificPage(pageSize, offset);
-            } else {
-                tracks = await repository.getAllTracks();
-            }
-
-            const result = tracks.map((track) => {
-                return {
-                    id: track.id,
-                    title: track.title,
-                    duration: track.duration,
-                };
-            });
-
-            response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error) {
                 response.status(404).json({ error: error.message });

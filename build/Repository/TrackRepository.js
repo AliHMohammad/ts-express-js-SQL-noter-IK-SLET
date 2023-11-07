@@ -1,7 +1,11 @@
 import prisma from "../Database/data-source.js";
 export default class TrackRepository {
     constructor() { }
-    async getAllTracks() {
+    async getAllTracks(sort, direction) {
+        const orderBy = {
+            [sort]: direction.toLowerCase()
+        };
+        console.log(orderBy);
         return prisma.track.findMany({
             select: {
                 id: true,
@@ -28,9 +32,7 @@ export default class TrackRepository {
                     }
                 }
             },
-            orderBy: {
-                title: "asc"
-            }
+            orderBy: orderBy
         });
     }
     async getSingleTrack(id) {
@@ -171,7 +173,11 @@ export default class TrackRepository {
             }
         });
     }
-    async getTracksOnSpecificPage(pageSize, offsetValue) {
+    async getTracksOnSpecificPage(sort, direction, pageSize, offsetValue) {
+        const orderBy = {
+            [sort]: direction.toLowerCase()
+        };
+        console.log(orderBy);
         return prisma.track.findMany({
             select: {
                 id: true,
@@ -198,9 +204,7 @@ export default class TrackRepository {
                     }
                 }
             },
-            orderBy: {
-                title: "asc"
-            },
+            orderBy: orderBy,
             skip: offsetValue,
             take: pageSize
         });
