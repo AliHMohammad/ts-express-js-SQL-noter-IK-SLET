@@ -8,37 +8,44 @@ export default class OtherRepository {
 
     public async searchAll(query: string) {
         type Tresult = {
-            artists?: artist[],
-            tracks?: track[],
-            albums?: album[]
+            artists: artist[],
+            tracks: track[],
+            albums: album[]
         }
 
-        const result: Tresult = {}
-
-        result.artists = await prisma.artist.findMany({
-            where: {
-                name: {
-                    contains: query
-                }
+        return prisma.$transaction(async (prisma) => {
+            const result: Tresult = {
+                artists: [],
+                tracks: [],
+                albums: []
             }
+
+            result.artists = await prisma.artist.findMany({
+                where: {
+                    name: {
+                        contains: query
+                    }
+                }
+            });
+
+            result.albums = await prisma.album.findMany({
+                where: {
+                    title: {
+                        contains: query
+                    }
+                }
+            });
+
+            result.tracks = await prisma.track.findMany({
+                where: {
+                    title: {
+                        contains: query
+                    }
+                }
+            });
+
+            return result;
         });
 
-        result.albums = await prisma.album.findMany({
-            where: {
-                title: {
-                    contains: query
-                }
-            }
-        });
-
-        result.tracks = await prisma.track.findMany({
-            where: {
-                title: {
-                    contains: query
-                }
-            }
-        });
-
-        return result;
     }
 }

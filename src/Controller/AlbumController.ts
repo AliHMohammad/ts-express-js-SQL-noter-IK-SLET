@@ -196,7 +196,8 @@ export default class AlbumController {
             if (!title || !image || !yearOfRelease || !artists || !tracks) throw new Error("Missing parameters");
 
             const repository = new AlbumRepository();
-            const album = await repository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+            await repository.updateAlbum(id, title, yearOfRelease, image, artists, tracks);
+            const album = await repository.getSingleAlbum(id);
 
             const result = {
                 id: album.id,

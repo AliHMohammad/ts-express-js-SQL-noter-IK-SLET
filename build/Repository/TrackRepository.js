@@ -108,66 +108,71 @@ export default class TrackRepository {
         });
     }
     async createTrack(title, duration, artists, albums) {
-        const track = await prisma.track.create({
-            data: {
-                title,
-                duration
-            }
-        });
-        for (const artist of artists) {
-            await prisma.artist_track.create({
+        const transactionResult = await prisma.$transaction(async (prisma) => {
+            const track = await prisma.track.create({
                 data: {
-                    track_id: track.id,
-                    artist_id: artist.id
+                    title,
+                    duration
                 }
             });
-        }
-        for (const album of albums) {
-            await prisma.album_track.create({
-                data: {
-                    track_id: track.id,
-                    album_id: album.id,
-                },
-            });
-        }
-        return track;
+            for (const artist of artists) {
+                await prisma.artist_track.create({
+                    data: {
+                        track_id: track.id,
+                        artist_id: artist.id
+                    }
+                });
+            }
+            for (const album of albums) {
+                await prisma.album_track.create({
+                    data: {
+                        track_id: track.id,
+                        album_id: album.id,
+                    },
+                });
+            }
+            return track;
+        });
+        return transactionResult;
     }
     async updateTrack(id, title, duration, artists, albums) {
-        await prisma.track.update({
-            data: {
-                title,
-                duration
-            },
-            where: {
-                id
-            }
-        });
-        await prisma.album_track.deleteMany({
-            where: {
-                track_id: id
-            }
-        });
-        await prisma.artist_track.deleteMany({
-            where: {
-                track_id: id
-            }
-        });
-        for (const artist of artists) {
-            await prisma.artist_track.create({
+        await prisma.$transaction(async (prisma) => {
+            await prisma.track.update({
                 data: {
-                    track_id: id,
-                    artist_id: artist.id
+                    title,
+                    duration
+                },
+                where: {
+                    id
                 }
             });
-        }
-        for (const album of albums) {
-            await prisma.album_track.create({
-                data: {
-                    track_id: id,
-                    album_id: album.id
+            await prisma.album_track.deleteMany({
+                where: {
+                    track_id: id
                 }
             });
-        }
+            await prisma.artist_track.deleteMany({
+                where: {
+                    track_id: id
+                }
+            });
+            for (const artist of artists) {
+                await prisma.artist_track.create({
+                    data: {
+                        track_id: id,
+                        artist_id: artist.id
+                    }
+                });
+            }
+            for (const album of albums) {
+                await prisma.album_track.create({
+                    data: {
+                        track_id: id,
+                        album_id: album.id
+                    }
+                });
+            }
+        });
     }
     async deleteTrack(id) {
         return prisma.track.delete({
