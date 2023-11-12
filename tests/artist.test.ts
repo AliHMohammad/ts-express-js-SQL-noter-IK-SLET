@@ -8,12 +8,19 @@ describe("Artist", () => {
         it('should return 404, if artist not found', async() => {
             const artistId = "afddfssdf";
 
-            await supertest(app).get(`/artists/${artistId}`).expect(404);
+            const {body, statusCode} = await supertest(app).get(`/artists/${artistId}`)
+
+            expect(statusCode).toBe(404)
         });
 
         it('should return 200, if artist is found', async () => {
             const artistId = 1
-            await supertest(app).get(`/artists/${artistId}`).expect(200);
+            const {body, statusCode} = await supertest(app).get(`/artists/${artistId}`)
+
+            expect(statusCode).toBe(200)
+            expect(body.name).toBe("Daft Punk");
         });
     })
 })
+
+

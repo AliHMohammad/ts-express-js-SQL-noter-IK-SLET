@@ -5,7 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "test": "jest --coverage --watchAll",
+        "test": "jest --coverage --watchAll --detectOpenHandles",
         "dev": "concurrently \"tsc -w\" \"nodemon build/server.js\""
     },
     "keywords": [],
