@@ -2,8 +2,8 @@ import prisma from "./Database/data-source.js";
 import createServer from "./app.js";
 
 
-const port = 3000;
-const app = createServer()
+const port = process.env.PORT;
+export const app = createServer()
 
 
 
