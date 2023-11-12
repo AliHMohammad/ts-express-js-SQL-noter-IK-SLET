@@ -11,7 +11,7 @@ export default class ArtistController {
             const repository = new ArtistRepository();
             const artists = await repository.getAllArtists();
 
-            response.status(201).json(artists);
+            response.status(200).json(artists);
         } catch (error: any) {
             if (error instanceof Error){
                 response.status(404).json({error: error.message});
@@ -42,7 +42,7 @@ export default class ArtistController {
                 })
             }
 
-            response.status(201).json(result);
+            response.status(200).json(result);
         } catch (error: any) {
             if (error instanceof Error){
                 response.status(404).json({error: error.message});

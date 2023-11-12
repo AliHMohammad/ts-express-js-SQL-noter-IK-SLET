@@ -3,12 +3,11 @@ version: '3.1'
 services:
     mysql:
         image: mysql:latest
+        restart: always
         container_name: integration-test
         env_file: .env.test
         ports:
             - "3200:3300"
-        volumes:
-            - mysql_data:/var/lib/mysql
 
-volumes:
-    mysql_data:
+
+
