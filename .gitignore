@@ -311,6 +311,8 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+.env.development
+.env.test
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -572,4 +574,8 @@ dist
 # Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
 
 
-# End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,webstorm+all,webstorm,webstorm+iml,jetbrains,jetbrains+all,jetbrains+iml
+# End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,webstorm+all,webstorm,webstorm+iml,jetbrains,jetbrains+all,jetbrains+iml!/.env.development
+!/.env.test
+!/.env.test
+.env.development
+.env.test

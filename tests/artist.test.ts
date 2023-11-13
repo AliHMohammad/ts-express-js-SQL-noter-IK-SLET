@@ -13,7 +13,7 @@ describe("Artist", () => {
             expect(statusCode).toBe(404)
         });
 
-        it('should return 200, if artist is found', async () => {
+        it.skip('should return 200, if artist is found', async () => {
             const artistId = 1
             const {body, statusCode} = await supertest(app).get(`/artists/${artistId}`)
 

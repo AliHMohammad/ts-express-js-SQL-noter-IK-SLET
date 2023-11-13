@@ -5,8 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "test": "jest --coverage --watchAll --detectOpenHandles",
-        "dev": "concurrently \"tsc -w\" \"nodemon build/server.js\""
+        "test": "dotenv -e .env.test npx prisma migrate deploy && dotenv -e .env.test jest --coverage --detectOpenHandles",
+        "dev": "concurrently \"tsc -w\" \"dotenv -e .env.development nodemon build/server.js\""
     },
     "keywords": [],
     "author": "",
