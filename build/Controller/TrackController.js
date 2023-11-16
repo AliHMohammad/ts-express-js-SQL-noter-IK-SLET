@@ -1,6 +1,10 @@
 import TrackRepository from "../Repository/TrackRepository.js";
 export default class TrackController {
     constructor() { }
+    //Lav en DTO-mappe
+    //Data-transfer-object
+    //const dto = tracks.map(track) => {}
+    //response.json(dto)
     async getAllTracksExecutor(request, response) {
         const pageNum = parseInt(request.query.pageNum);
         const pageSize = parseInt(request.query.pageSize);
