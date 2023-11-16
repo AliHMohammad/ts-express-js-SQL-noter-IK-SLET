@@ -1,10 +1,20 @@
 import ArtistRepository from "../Repository/ArtistRepository.js";
+import ArtistService from "../Service/ArtistService.js";
 export default class ArtistController {
     constructor() { }
-    async getAllArtistsExecutor(_request, response) {
+    async getAllArtistsExecutor(request, response) {
+        const { sortDir, sortBy, pageNum, pageSize } = request.query;
         try {
-            const repository = new ArtistRepository();
-            const artists = await repository.getAllArtists();
+            if (!sortBy || !sortDir)
+                throw new Error("Missing sortBy and/or sortDir query");
+            const queries = {
+                sortDir,
+                sortBy,
+                pageNum: pageNum,
+                pageSize: pageSize
+            };
+            const service = new ArtistService();
+            const artists = await service.getAllArtistsService(queries);
             response.status(201).json(artists);
         }
         catch (error) {

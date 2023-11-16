@@ -1,12 +1,30 @@
 import prisma from "../Database/data-source.js";
 export default class ArtistRepository {
     constructor() { }
-    async getAllArtists() {
+    async getAllArtists(sortBy, sortDir) {
+        const orderBy = {
+            [sortBy]: sortDir.toLowerCase()
+        };
         return prisma.artist.findMany({
-            orderBy: {
-                name: "asc"
-            }
+            orderBy: orderBy
         });
+    }
+    async getAllArtistsPagination(sortBy, sortDir, limit, offset) {
+        const orderBy = {
+            [sortBy]: sortDir.toLowerCase()
+        };
+        const result = {};
+        result.data = await prisma.artist.findMany({
+            skip: offset,
+            take: limit,
+            orderBy: orderBy
+        });
+        result.metaData = {
+            limit,
+            offset,
+            count: await prisma.artist.count()
+        };
+        return result;
     }
     async getSingleArtist(id) {
         return prisma.artist.findFirstOrThrow({
