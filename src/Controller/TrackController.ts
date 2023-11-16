@@ -7,6 +7,10 @@ import {ResponseT} from "../Types/global";
 
 export default class TrackController {
     constructor() {}
+    //Lav en DTO-mappe
+    //Data-transfer-object
+    //const dto = tracks.map(track) => {}
+    //response.json(dto)
 
     public async getAllTracksExecutor(request: Request<{}, {}, {}, {pageNum: string, pageSize: string, sort: string, direction: string}>, response: Response) {
         const pageNum = parseInt(request.query.pageNum);
