@@ -10,7 +10,7 @@ interface TQueries {
 
 export default class ArtistService {
     constructor() {};
-
+    //
 
     public async getAllArtistsService({sortBy, sortDir, pageNum, pageSize}: TQueries) {
 
