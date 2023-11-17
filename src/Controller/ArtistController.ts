@@ -1,15 +1,26 @@
 import {Request, Response} from "express";
 import ArtistRepository from "../Repository/ArtistRepository.js";
+import ArtistService from "../Service/ArtistService.js";
 
 
 export default class ArtistController {
     constructor() {}
 
-    public async getAllArtistsExecutor(_request: Request<{},{},{},{}>, response: Response) {
+    public async getAllArtistsExecutor(request: Request<{},{},{},{sortDir: string, sortBy: string, pageSize: string, pageNum: string}>, response: Response) {
+        const {sortDir, sortBy, pageNum, pageSize} = request.query;
 
         try {
-            const repository = new ArtistRepository();
-            const artists = await repository.getAllArtists();
+            if (!sortBy || !sortDir) throw new Error("Missing sortBy and/or sortDir query");
+
+            const queries = {
+                sortDir,
+                sortBy,
+                pageNum: pageNum,
+                pageSize: pageSize
+            }
+
+            const service = new ArtistService();
+            const artists = await service.getAllArtistsService(queries)
 
             response.status(201).json(artists);
         } catch (error: any) {
