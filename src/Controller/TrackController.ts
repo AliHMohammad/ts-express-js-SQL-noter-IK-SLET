@@ -12,6 +12,8 @@ export default class TrackController {
     //const dto = tracks.map(track) => {}
     //response.json(dto)
 
+    //UNDERSØG FUNCTION OVERLOADING
+
     public async getAllTracksExecutor(request: Request<{}, {}, {}, {pageNum: string, pageSize: string, sort: string, direction: string}>, response: Response) {
         const pageNum = parseInt(request.query.pageNum);
         const pageSize = parseInt(request.query.pageSize);
@@ -19,6 +21,7 @@ export default class TrackController {
 
         try {
             if (!sort || !direction) throw new Error("Missing sort and/or direction queries");
+
             const repository = new TrackRepository();
             let tracks;
             let result: ResponseT = {};
