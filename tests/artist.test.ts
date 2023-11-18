@@ -76,4 +76,35 @@ describe("Artists", () => {
         });
     })
 
+    describe("Create artist", () => {
+        it('should successfully create a new artist', async () => {
+            const artistToCreate = {
+                name: "TestName",
+                image: "TestImage.jpg"
+            }
+
+            const {body, statusCode} = await supertest(app).post("/artists").send(artistToCreate);
+
+            expect(statusCode).toBe(201);
+            expect(body.id).toBeGreaterThan(0);
+            expect(body.name).toEqual("TestName");
+            expect(body.image).toEqual("TestImage.jpg")
+        });
+
+        it('should fail to create an artist that already exists', async () => {
+            const newArtist = {
+                name: "James Bond",
+                image: "Bond.jpg"
+            }
+
+            await prisma.artist.create({
+                data: newArtist
+            })
+
+            const {statusCode} = await supertest(app).post("/artists").send(newArtist);
+
+            expect(statusCode).toBe(404);
+        });
+    })
+
 })
