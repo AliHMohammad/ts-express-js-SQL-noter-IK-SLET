@@ -7,7 +7,7 @@ export default {
   testMatch: ["**/*/*.test.ts"],
   verbose: true,
   forceExit: true,
-  /*clearMocks: true*/
+  clearMocks: true
 }
 
 

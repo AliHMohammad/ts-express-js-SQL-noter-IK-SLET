@@ -54,6 +54,11 @@ describe("Artists", () => {
                 expect(artist).toHaveProperty("id")
                 expect(artist.name).toEqual(artists[index].name)
                 expect(artist.image).toEqual(artists[index].image)
+                expect(artist).toEqual({
+                    id: expect.any(Number),
+                    name: expect.any(String),
+                    image: expect.any(String)
+                })
             })
         });
     })
@@ -73,6 +78,12 @@ describe("Artists", () => {
             expect(body.id).toEqual(id);
             expect(body.name).toEqual("Ali");
             expect(body.image).toEqual("Ali.jpg");
+            expect(body).toEqual({
+                id: expect.any(Number),
+                name: expect.any(String),
+                image: expect.any(String),
+                tracks: expect.any(Array)
+            })
         });
     })
 
@@ -89,6 +100,11 @@ describe("Artists", () => {
             expect(body.id).toBeGreaterThan(0);
             expect(body.name).toEqual("TestName");
             expect(body.image).toEqual("TestImage.jpg")
+            expect(body).toEqual({
+                id: expect.any(Number),
+                name: expect.any(String),
+                image: expect.any(String)
+            })
         });
 
         it('should fail to create an artist that already exists', async () => {
